@@ -930,20 +930,8 @@
       font-size: 12px
     }
 
-    @keyframes cardIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.97)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1)
-      }
-    }
-
-    .pcard.anim-in {
-      animation: cardIn 0.3s cubic-bezier(0.34, 1.2, 0.64, 1) both, breathe var(--bd, 7s) ease-in-out var(--bdel, 0s) infinite
+    .pcard {
+      animation: breathe var(--bd, 7s) ease-in-out var(--bdel, 0s) infinite
     }
 
     /* ── MODAL ── */
@@ -1562,7 +1550,7 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      flex: 1;
+      max-height: 260px;
       overflow-y: auto
     }
 
@@ -1987,7 +1975,7 @@
     <div id="tabs">
       <div class="tab active" onclick="switchTab('plan')">Plan</div>
       <div class="tab" onclick="switchTab('review')">Review</div>
-      <div class="tab" onclick="switchTab('fawatih')">Fawatih</div>
+      <div class="tab" onclick="switchTab('fawatih')">Card Drills</div>
       <div class="tab" onclick="switchTab('file')">File</div>
     </div>
 
@@ -1999,7 +1987,7 @@
           <div class="plan-box">
             <div class="plan-box-title">Known Ayat</div>
             <div class="add-ayah-row">
-              <input class="ginput" id="ayah-search-in" placeholder="🔍 Search known ayat…"
+              <input class="ginput" id="ayah-search-in" placeholder="Search known ayat…"
                 style="flex:1;font-size:12px;padding:7px 12px" oninput="filterAyahList()" />
               <button class="btn primary" onclick="openAddAyahModal()" title="Add verses">+</button>
             </div>
@@ -2007,12 +1995,12 @@
           </div>
           <div class="plan-box">
             <div class="plan-box-title">Memorization Roadmap</div>
-            <div class="plan-steps" id="plan-steps-list"></div>
-            <div class="add-ayah-row" style="margin-top:10px">
+            <div class="add-ayah-row">
               <input class="ginput" id="add-step-in" placeholder="Add roadmap step…"
                 style="flex:1;font-size:12px;padding:7px 12px" onkeydown="if(event.key==='Enter')addStep()" />
               <button class="btn primary" onclick="addStep()">+</button>
             </div>
+            <div class="plan-steps" id="plan-steps-list"></div>
           </div>
           <div class="plan-box">
             <div class="plan-box-title">How to Memorize</div>
@@ -2059,7 +2047,6 @@
                 <div class="gselect-opt selected" onclick="setRevFilter('all','All')">All</div>
                 <div class="gselect-opt" onclick="setRevFilter('done','In prayer')">In prayer</div>
                 <div class="gselect-opt" onclick="setRevFilter('notdone','Not in prayer')">Not in prayer</div>
-                <div class="gselect-opt" onclick="setRevFilter('pending','Pending')">Pending</div>
                 <div class="gselect-opt" onclick="setRevFilter('next','Next up')">Next up</div>
               </div>
             </div>
@@ -2082,6 +2069,7 @@
           <div class="flashcard" id="flashcard" onclick="flipCard()">
             <div class="fc-face fc-front">
               <div class="fc-num" id="fc-num">—</div>
+              <div id="fc-known-ind" style="font-family:var(--mono);font-size:11px;margin-top:6px">○ not known</div>
               <div class="fc-hint">click to reveal</div>
             </div>
             <div class="fc-face fc-back">
@@ -2409,12 +2397,6 @@
       });
       const gridEl = document.getElementById('review-grid');
       gridEl.innerHTML = filtered.length ? filtered.map((p, i) => makeCard(p, i)).join('') : '<div class="empty">No pages match.</div>';
-      if (filtered.length) {
-        gridEl.querySelectorAll('.pcard').forEach((c, i) => {
-          c.style.animationDelay = `${(i * 0.035).toFixed(2)}s`;
-          c.classList.add('anim-in');
-        });
-      }
       // reset bar
       const allDone = D.pages.length > 0 && D.pages.every(p => p.done);
       const rb = document.getElementById('review-reset');
@@ -2451,47 +2433,71 @@
       } catch(e) { return []; }
     }
 
+    const _chapterCache = {}; // surah → {pages: [startPage, endPage]}
+    async function getChapterInfo(surah) {
+      if (_chapterCache[surah]) return _chapterCache[surah];
+      try {
+        const r = await fetch(`https://api.quran.com/api/v4/chapters/${surah}`);
+        const d = await r.json();
+        _chapterCache[surah] = d.chapter || null;
+        return _chapterCache[surah];
+      } catch(e) { return null; }
+    }
+
     // Given a list of {surah, ayah} verse objects, return array of page cards.
-    // verseLabel = full page content. ln = lines owned ≥75% by input verses.
+    // Uses /chapters/x for authoritative start pages — never relies on by_page
+    // membership to assign verses to pages, eliminating boundary misassignment.
     async function buildPageCards(verses, rangeLabel, loadEl, fullPageLabel = false) {
       if (loadEl) loadEl.textContent = 'Fetching page data…';
+      if (!verses.length) return [];
 
-      // Build a set of input verse keys for ownership calculation
       const inputKeys = new Set(verses.map(v => `${v.surah}:${v.ayah}`));
 
-      // Step 1: find unique pages touched by input verses.
-      // Call by_key for the first verse of each page boundary; use the page's
-      // confirmed keyset to skip remaining verses on that same page.
-      const touchedPages = []; // ordered unique page numbers
-      let currentPageNum  = null;
-      let currentPageKeys = null;
+      // Step 1: find the start page for the first verse using /chapters/x
+      // then walk forward page by page, collecting pages that contain any inputKey.
+      const firstV   = verses[0];
+      const firstCh  = await getChapterInfo(firstV.surah);
+      if (!firstCh) return [];
 
-      for (const v of verses) {
-        const key = `${v.surah}:${v.ayah}`;
-        if (currentPageKeys && currentPageKeys.has(key)) continue;
-
-        if (loadEl) loadEl.textContent = `Fetching page for ${key}…`;
+      // chapters API gives pages array: [firstPage, lastPage] for the surah
+      let startPage = Array.isArray(firstCh.pages) ? firstCh.pages[0] : null;
+      if (!startPage) {
+        // fallback: use by_key for first verse
         try {
-          const r  = await fetch(`https://api.quran.com/api/v4/verses/by_key/${key}?words=false&fields=page_number`);
+          if (loadEl) loadEl.textContent = `Fetching page for ${firstV.surah}:${firstV.ayah}…`;
+          const r  = await fetch(`https://api.quran.com/api/v4/verses/by_key/${firstV.surah}:${firstV.ayah}?words=false&fields=page_number`);
           const dj = await r.json();
-          const pg = dj.verse && dj.verse.page_number;
-          if (!pg) continue;
-          if (pg !== currentPageNum) {
-            currentPageNum  = pg;
-            const pv = await fetchPageData(pg);
-            currentPageKeys = new Set(pv.map(v => v.verse_key));
-            touchedPages.push(pg);
-          }
-        } catch(e) { continue; }
+          startPage = dj.verse && dj.verse.page_number;
+        } catch(e) {}
+      }
+      if (!startPage) return [];
+
+      // Find end page: last verse's surah chapter info
+      const lastV  = verses[verses.length - 1];
+      const lastCh = await getChapterInfo(lastV.surah);
+      const endPage = (lastCh && Array.isArray(lastCh.pages)) ? lastCh.pages[1] : startPage + 50;
+
+      // Walk pages from startPage to endPage, collect those containing any inputKey
+      const touchedPages = [];
+      for (let pg = startPage; pg <= endPage; pg++) {
+        if (loadEl) loadEl.textContent = `Scanning page ${pg}…`;
+        const pv = await fetchPageData(pg);
+        if (!pv.length) break;
+        const hasInput = pv.some(v => inputKeys.has(v.verse_key));
+        if (hasInput) touchedPages.push(pg);
+        // Stop once we've passed all input verses
+        const lastKeyOnPage = pv[pv.length - 1].verse_key;
+        const [lastS, lastA] = lastKeyOnPage.split(':').map(Number);
+        const lastInput = verses[verses.length - 1];
+        if (lastS > lastInput.surah || (lastS === lastInput.surah && lastA >= lastInput.ayah)) break;
       }
 
-      // Step 2: build card per page
+      // Step 2: build card per touched page
       const cards = [];
       for (const pageNum of touchedPages) {
         const pageVerses = await fetchPageData(pageNum);
         if (!pageVerses.length) continue;
 
-        // verseLabel: full page when entering whole surahs, clipped to input range for verse ranges
         let verseLabel;
         if (fullPageLabel) {
           const allPageVs = pageVerses.map(pv => { const [s,a] = pv.verse_key.split(':').map(Number); return {surah:s,ayah:a}; });
@@ -2501,34 +2507,36 @@
             .filter(pv => inputKeys.has(pv.verse_key))
             .map(pv => { const [s,a] = pv.verse_key.split(':').map(Number); return {surah:s,ayah:a}; });
           verseLabel = condenseVerseList(ownedPageVs);
+          if (!verseLabel) continue; // page has none of our verses
         }
 
-        // ln: '*' if input covers the whole page, else 75%-ownership count
+        // ln: full page cards are always *, partial-range cards use 75% ownership
         let ln = '*';
-        try {
-          const firstPageKey = pageVerses[0].verse_key;
-          const lastPageKey  = pageVerses[pageVerses.length - 1].verse_key;
-          const fullPage     = inputKeys.has(firstPageKey) && inputKeys.has(lastPageKey);
-
-          if (!fullPage) {
-            const lineTotals   = new Map();
-            const lineRangeOwn = new Map();
-            for (const pv of pageVerses) {
-              const inRange = inputKeys.has(pv.verse_key);
-              for (const w of (pv.words || [])) {
-                const lnum = w.line_number;
-                if (lnum == null) continue;
-                lineTotals.set(lnum, (lineTotals.get(lnum) || 0) + 1);
-                if (inRange) lineRangeOwn.set(lnum, (lineRangeOwn.get(lnum) || 0) + 1);
+        if (!fullPageLabel) {
+          try {
+            const firstPageKey = pageVerses[0].verse_key;
+            const lastPageKey  = pageVerses[pageVerses.length - 1].verse_key;
+            const fullPage     = inputKeys.has(firstPageKey) && inputKeys.has(lastPageKey);
+            if (!fullPage) {
+              const lineTotals   = new Map();
+              const lineRangeOwn = new Map();
+              for (const pv of pageVerses) {
+                const inRange = inputKeys.has(pv.verse_key);
+                for (const w of (pv.words || [])) {
+                  const lnum = w.line_number;
+                  if (lnum == null) continue;
+                  lineTotals.set(lnum, (lineTotals.get(lnum) || 0) + 1);
+                  if (inRange) lineRangeOwn.set(lnum, (lineRangeOwn.get(lnum) || 0) + 1);
+                }
               }
+              let ownedLines = 0;
+              for (const [lnum, total] of lineTotals) {
+                if ((lineRangeOwn.get(lnum) || 0) / total >= 0.75) ownedLines++;
+              }
+              ln = ownedLines > 0 ? String(ownedLines) : '*';
             }
-            let ownedLines = 0;
-            for (const [lnum, total] of lineTotals) {
-              if ((lineRangeOwn.get(lnum) || 0) / total >= 0.75) ownedLines++;
-            }
-            ln = ownedLines > 0 ? String(ownedLines) : '*';
-          }
-        } catch(e) {}
+          } catch(e) {}
+        }
 
         cards.push({ page: pageNum, verseLabel, ln });
       }
@@ -3011,24 +3019,31 @@
       { n: 114, name: "An-Nas", arabic: "قُلْ أَعُوذُ", opening: "Qul a'udhu birabbin nas" }
     ];
     function getKnownSurahSet() {
-      const base = new Set([1, 2, 19, 93, 95, 97, 103, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114]);
+      const known = new Set();
       const all = [...D.knownAyat.qiraat, ...D.knownAyat.memory];
       all.forEach(label => {
-        // Extract all surah numbers: patterns like "2:255", "19:1-33", "108-114", "2:284-3:20", "94"
-        // Cross-surah: X:A-Y:B
-        const cross = label.match(/^(\d+):\d+-(\d+):\d+$/);
-        if (cross) { const s1=parseInt(cross[1]),s2=parseInt(cross[2]); for(let s=s1;s<=s2;s++) base.add(s); return; }
-        // surah range: X-Y
-        const sRange = label.match(/^(\d+)-(\d+)$/);
-        if (sRange) { const s1=parseInt(sRange[1]),s2=parseInt(sRange[2]); if(s1<=114&&s2<=114) { for(let s=s1;s<=s2;s++) base.add(s); return; } }
-        // X:A or X:A-B → surah X
-        const withAyah = label.match(/^(\d+):/);
-        if (withAyah) { base.add(parseInt(withAyah[1])); return; }
-        // pure number → whole surah
+        // A surah's beginning is known only if ayah 1 is included in the range.
+        // Cross-surah: X:A-Y:B — surah X known if A===1, surah Y never (starts mid)
+        const cross = label.match(/^(\d+):(\d+)-\d+:\d+$/);
+        if (cross) { if (parseInt(cross[2]) === 1) known.add(parseInt(cross[1])); return; }
+        // Within-surah range: X:A-B — known if A===1
+        const range = label.match(/^(\d+):(\d+)-\d+$/);
+        if (range) { if (parseInt(range[2]) === 1) known.add(parseInt(range[1])); return; }
+        // Single ayah: X:A — known if A===1
+        const single = label.match(/^(\d+):(\d+)$/);
+        if (single) { if (parseInt(single[2]) === 1) known.add(parseInt(single[1])); return; }
+        // Surah range: X-Y — all surahs known from beginning
+        const surahRange = label.match(/^(\d+)-(\d+)$/);
+        if (surahRange) {
+          const s1 = parseInt(surahRange[1]), s2 = parseInt(surahRange[2]);
+          if (s1 <= 114 && s2 <= 114) { for (let s = s1; s <= s2; s++) known.add(s); }
+          return;
+        }
+        // Whole surah: X — known from beginning
         const pure = label.match(/^(\d+)$/);
-        if (pure) { const n=parseInt(pure[1]); if(n>=1&&n<=114) base.add(n); }
+        if (pure) { const n = parseInt(pure[1]); if (n >= 1 && n <= 114) known.add(n); }
       });
-      return base;
+      return known;
     }
     let fawatihDeck = [], fawatihIdx = 0, fMode = 'all', fawatihKnown = 0, fawatihUnknown = 0;
 
@@ -3052,6 +3067,9 @@
       document.getElementById('fc-opening').textContent = c.opening;
       document.getElementById('score-known').textContent = `✓ ${fawatihKnown}`;
       document.getElementById('score-unknown').textContent = `✗ ${fawatihUnknown}`;
+      const isKnown = getKnownSurahSet().has(c.n);
+      const ind = document.getElementById('fc-known-ind');
+      if (ind) { ind.textContent = isKnown ? '● known' : '○ not known'; ind.style.color = isKnown ? 'rgba(74,222,128,0.8)' : 'rgba(255,255,255,0.2)'; }
     }
     function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
     function nextCard() { document.getElementById('flashcard').classList.remove('flipped'); fawatihIdx = (fawatihIdx + 1) % fawatihDeck.length; setTimeout(updateFawatihCard, 150); }
