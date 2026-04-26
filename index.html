@@ -1066,47 +1066,200 @@
       display: none
     }
 
-    /* ── FAWATIH ── */
+    /* ── FAWATIH / LEITNER ── */
     .fawatih-controls {
       display: flex;
       gap: 8px;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
       flex-wrap: wrap;
       align-items: center
     }
 
-    .fawatih-progress {
-      font-size: 12px;
-      font-family: var(--mono);
-      color: var(--text-muted)
+    /* ── Leitner box strip ── */
+    .lb-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 1rem
     }
+    .lb-box {
+      border-radius: 14px;
+      border: 0.5px solid var(--glass-border);
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 10px 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: default;
+      transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden
+    }
+    .lb-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glass-hi), transparent);
+      pointer-events: none
+    }
+    .lb-box.lb-active {
+      border-color: rgba(255,59,48,0.35);
+      background: rgba(255,59,48,0.07);
+      box-shadow: 0 0 18px rgba(255,59,48,0.08)
+    }
+    .lb-box.lb-active::before {
+      background: linear-gradient(90deg, transparent, rgba(255,59,48,0.4), transparent)
+    }
+    .lb-box-label {
+      font-size: 9px;
+      font-family: var(--mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+    .lb-box.lb-active .lb-box-label { color: rgba(255,140,130,0.8) }
+    .lb-box-num {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1
+    }
+    .lb-box.lb-active .lb-box-num { color: rgba(255,150,140,0.95) }
+    .lb-freq {
+      font-size: 9px;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      opacity: 0.7
+    }
+    .lb-box.lb-active .lb-freq { color: rgba(255,130,120,0.6) }
+    /* Mini bar inside box */
+    .lb-mini-bar {
+      height: 2px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 2px
+    }
+    .lb-mini-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.18);
+      transition: width 0.4s cubic-bezier(0.34,1.1,0.64,1)
+    }
+    .lb-box.lb-active .lb-mini-fill { background: rgba(255,100,90,0.6) }
 
+    /* ── Session info banner ── */
+    .lb-session-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border-radius: 13px;
+      border: 0.5px solid var(--glass-border);
+      background: var(--surf);
+      margin-bottom: 0.9rem;
+      flex-wrap: wrap
+    }
+    .lb-session-tag {
+      font-size: 9px;
+      font-family: var(--mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 100px;
+      border: 0.5px solid var(--done-border);
+      background: var(--done-bg);
+      color: rgba(255,140,130,0.9);
+      white-space: nowrap
+    }
+    .lb-session-info {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      flex: 1
+    }
+    .lb-si-ctr {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+    .lb-si-ctr b { color: var(--text-dim); font-weight: 600 }
+    .lb-si-ctr.green b { color: #4ade80 }
+    .lb-si-ctr.red b   { color: rgba(255,110,100,0.9) }
+    .lb-sep { color: var(--text-muted); font-size: 10px; font-family: var(--mono) }
+
+    /* ── Progress bar ── */
+    .fp-bar-wrap {
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 100px;
+      margin-bottom: 1rem;
+      overflow: hidden
+    }
+    .fp-bar-track {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 0.4s cubic-bezier(0.34,1.2,0.64,1)
+    }
+    .fp-bar-track { background: linear-gradient(90deg, rgba(200,80,60,0.6), rgba(180,80,50,0.35)) }
+
+    /* ── Card deck ── */
     .card-deck {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 300px;
-      perspective: 1000px
+      min-height: 270px;
+      perspective: 1200px
     }
 
     .flashcard {
-      width: min(540px, 90vw);
-      height: min(310px, 40vw);
-      min-height: 220px;
+      width: min(520px, 90vw);
+      height: min(290px, 36vw);
+      min-height: 200px;
       position: relative;
-      cursor: pointer;
       transform-style: preserve-3d;
-      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)
+      /* NO cursor:pointer — clicking card does nothing; buttons handle everything */
+    }
+    .flashcard.is-flipped { transform: rotateY(180deg) }
+
+    /* Flip animation — separate from state class so we can control timing */
+    .flashcard.animating {
+      transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1)
     }
 
-    .flashcard.flipped {
-      transform: rotateY(180deg)
+    /* Card feedback animations */
+    @keyframes fc-shake {
+      0%   { transform: rotateY(180deg) translateX(0) }
+      18%  { transform: rotateY(180deg) translateX(-9px) }
+      38%  { transform: rotateY(180deg) translateX(9px) }
+      56%  { transform: rotateY(180deg) translateX(-5px) }
+      74%  { transform: rotateY(180deg) translateX(4px) }
+      100% { transform: rotateY(180deg) translateX(0) }
     }
+    @keyframes fc-pulse-green {
+      0%   { box-shadow: 0 0 0 0 rgba(74,222,128,0.6) }
+      50%  { box-shadow: 0 0 0 14px rgba(74,222,128,0) }
+      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0) }
+    }
+    .flashcard.shake-fail { animation: fc-shake 0.42s ease }
+    .flashcard.pulse-pass { animation: fc-pulse-green 0.5s ease; border-radius: 26px }
 
     .fc-face {
       position: absolute;
       inset: 0;
-      border-radius: 28px;
+      border-radius: 26px;
       border: 0.5px solid var(--glass-border);
       background: var(--glass);
       backdrop-filter: blur(28px) saturate(1.5);
@@ -1118,52 +1271,52 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      overflow: hidden
+      overflow: hidden;
+      transition: border-color 0.3s, background 0.3s, box-shadow 0.3s
     }
-
     .fc-face::before {
       content: '';
       position: absolute;
       inset: 0;
       border-radius: inherit;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.055) 0%, transparent 55%);
+      background: linear-gradient(135deg, rgba(255,255,255,0.055) 0%, transparent 55%);
       pointer-events: none
     }
-
     .fc-face::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--glass-hi), transparent)
     }
-
-    .fc-back {
-      transform: rotateY(180deg)
+    .fc-face.fail-glow {
+      border-color: rgba(255,59,48,0.38);
+      background: rgba(255,30,20,0.08)
     }
+    .fc-back { transform: rotateY(180deg) }
 
     .fc-num {
-      font-size: 64px;
+      font-size: 60px;
       font-weight: 800;
       letter-spacing: -0.04em;
       color: var(--text);
       line-height: 1
     }
-
-    .fc-num .accent {
-      color: var(--red)
+    .fc-num .accent { color: var(--red) }
+    .fc-box-badge {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      letter-spacing: .07em;
+      margin-top: 8px
     }
-
     .fc-surah-name {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 600;
       color: var(--text);
       margin-bottom: 6px;
       text-align: center
     }
-
     .fc-arabic {
       font-family: var(--arabic);
       font-size: 18px;
@@ -1172,58 +1325,120 @@
       text-align: center;
       direction: rtl
     }
-
     .fc-opening {
-      font-size: 12px;
+      font-size: 11px;
       font-family: var(--mono);
       color: var(--text-muted);
       text-align: center;
-      line-height: 1.6;
+      line-height: 1.65;
       max-width: 260px
     }
-
     .fc-hint {
       position: absolute;
-      bottom: 14px;
-      font-size: 10px;
+      bottom: 13px;
+      font-size: 9px;
       font-family: var(--mono);
       color: var(--text-muted);
-      letter-spacing: .06em
+      letter-spacing: .07em;
+      opacity: 0.6
     }
 
+    /* ── Nav buttons ── */
     .fc-nav {
+      position: relative;
       display: flex;
       justify-content: center;
-      gap: 12px;
-      margin-top: 1.5rem;
-      flex-wrap: wrap
+      align-items: center;
+      gap: 10px;
+      margin-top: 1.1rem
+    }
+    /* Flip is the flex center anchor */
+    .fc-btn-flip {
+      /* sits in normal flow at center */
+      flex-shrink: 0
+    }
+    /* pass/fail use order to flank flip, with auto margins keeping flip centered */
+    #lb-btn-fail { order: 1 }
+    .fc-btn-flip  { order: 2 }
+    #lb-btn-pass  { order: 3 }
+    .fc-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-family: var(--mono);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      border: 0.5px solid var(--glass-border);
+      background: var(--surf);
+      color: var(--text-dim)
+    }
+    .fc-btn:hover { background: var(--surf2); color: var(--text) }
+    .fc-btn:active { transform: scale(0.97) }
+    .fc-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none }
+    .fc-btn.pass {
+      border-color: rgba(74,222,128,0.3);
+      background: rgba(74,222,128,0.08);
+      color: rgba(74,222,128,0.9)
+    }
+    .fc-btn.pass:hover { background: rgba(74,222,128,0.15); border-color: rgba(74,222,128,0.45) }
+    .fc-btn.fail {
+      border-color: rgba(255,59,48,0.3);
+      background: rgba(255,59,48,0.08);
+      color: rgba(255,110,100,0.9)
+    }
+    .fc-btn.fail:hover { background: rgba(255,59,48,0.15); border-color: rgba(255,59,48,0.45) }
+
+    kbd {
+      font-family: var(--mono);
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 0.5px solid var(--glass-border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-muted);
+      vertical-align: middle
     }
 
-    .fc-score {
-      margin-top: 1rem;
+    /* ── Session-done screen ── */
+    .fc-complete {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      min-height: 270px;
       text-align: center
     }
-
-    .fc-score-inner {
-      display: inline-flex;
-      gap: 12px;
-      padding: 8px 16px;
-      border-radius: 100px;
-      border: 0.5px solid var(--glass-border);
-      background: var(--glass)
+    .fc-complete.visible { display: flex }
+    .card-deck.hidden, .fc-nav.hidden { display: none }
+    .fc-complete-icon { font-size: 44px; line-height: 1 }
+    .fc-complete-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text)
     }
-
-    .score-known {
-      font-size: 12px;
+    .fc-complete-sub {
+      font-size: 11px;
       font-family: var(--mono);
-      color: #4ade80
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 340px
     }
+    .fc-complete-sub b { color: var(--text-dim) }
+    .fc-complete-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 4px }
 
-    .score-unknown {
-      font-size: 12px;
-      font-family: var(--mono);
-      color: var(--red)
+    .lb-reset-btn {
+      font-size: 11px;
+      color: rgba(255,80,70,0.6);
+      border-color: rgba(255,59,48,0.18)
     }
+    .lb-reset-btn:hover { color: rgba(255,100,90,0.85); border-color: rgba(255,59,48,0.35); background: rgba(255,59,48,0.06) }
 
     /* ── PLAN ── */
     .plan-grid {
@@ -1266,7 +1481,8 @@
       -webkit-backdrop-filter: blur(20px);
       padding: 16px 18px;
       display: flex;
-      flex-direction: column
+      flex-direction: column;
+      overflow: hidden
     }
 
     .plan-box-title {
@@ -1550,8 +1766,9 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      max-height: 260px;
-      overflow-y: auto
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0
     }
 
     .plan-steps::-webkit-scrollbar {
@@ -2007,7 +2224,7 @@
             <div class="memorize-steps">
               <div class="mem-phase">
                 <div class="mem-phase-title">Passive</div>
-                <div class="mem-step">Listen to the next group (2–10 ayahs) on loop, <b>changing start/end ayah</b> to
+                <div class="mem-step">Listen to the next group (2–10 ayahs) on loop with Mishary recitation, <b>changing start/end ayah</b> to
                   avoid anchored wrong memory</div>
               </div>
               <div class="mem-phase">
@@ -2056,44 +2273,82 @@
         <div class="page-grid" id="review-grid"></div>
         <div class="reset-bar" id="review-reset"></div>
       </div>
-
+      
       <!-- FAWATIH -->
       <div class="section" id="sec-fawatih">
+        
+        <!-- Controls: mode buttons left, reset right -->
         <div class="fawatih-controls">
-          <button class="btn" onclick="shuffleDeck()">⇄ Shuffle</button>
-          <button class="btn" onclick="fMode='all';initDeck()">All 114</button>
-          <button class="btn" onclick="fMode='known';initDeck()">Known beginnings</button>
-          <button class="btn" onclick="resetScore()">↺ Reset score</button>
+          <button class="btn" id="fbtn-all" onclick="lbSetMode('all')">All 114</button>
+          <button class="btn" id="fbtn-known" onclick="lbSetMode('known')">Known only</button>
+          <button class="btn lb-reset-btn" onclick="lbResetBoxes()" style="margin-left:auto">⚠ reset boxes</button>
         </div>
-        <div class="card-deck">
-          <div class="flashcard" id="flashcard" onclick="flipCard()">
-            <div class="fc-face fc-front">
+
+        <!-- 5 Leitner boxes -->
+        <div class="lb-strip" id="lb-strip">
+          <div class="lb-box" id="lb-box-1">
+            <div class="lb-box-label"><span>BOX 1</span><span class="lb-freq">every round</span></div>
+            <div class="lb-box-num" id="lb-count-1">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-1" style="width:0%"></div></div>
+          </div>
+          <div class="lb-box" id="lb-box-2">
+            <div class="lb-box-label"><span>BOX 2</span><span class="lb-freq">every 2nd</span></div>
+            <div class="lb-box-num" id="lb-count-2">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-2" style="width:0%"></div></div>
+          </div>
+          <div class="lb-box" id="lb-box-3">
+            <div class="lb-box-label"><span>BOX 3</span><span class="lb-freq">every 4th</span></div>
+            <div class="lb-box-num" id="lb-count-3">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-3" style="width:0%"></div></div>
+          </div>
+          <div class="lb-box" id="lb-box-4">
+            <div class="lb-box-label"><span>BOX 4</span><span class="lb-freq">every 8th</span></div>
+            <div class="lb-box-num" id="lb-count-4">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-4" style="width:0%"></div></div>
+          </div>
+          <div class="lb-box" id="lb-box-5">
+            <div class="lb-box-label"><span>BOX 5</span><span class="lb-freq">every 16th</span></div>
+            <div class="lb-box-num" id="lb-count-5">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-5" style="width:0%"></div></div>
+          </div>
+        </div>
+
+
+        <!-- Progress bar -->
+        <div class="fp-bar-wrap">
+          <div class="fp-bar-track" id="fp-bar" style="width:0%"></div>
+        </div>
+
+        <!-- Card -->
+        <div class="card-deck" id="fp-card-deck">
+          <div class="flashcard" id="flashcard">
+            <div class="fc-face fc-front" id="fc-front">
               <div class="fc-num" id="fc-num">—</div>
-              <div id="fc-known-ind" style="font-family:var(--mono);font-size:11px;margin-top:6px">○ not known</div>
-              <div class="fc-hint">click to reveal</div>
+              <div class="fc-box-badge" id="fc-box-badge"></div>
+              <div class="fc-hint">flip to reveal · <kbd>Space</kbd></div>
             </div>
-            <div class="fc-face fc-back">
+            <div class="fc-face fc-back" id="fc-back">
               <div class="fc-surah-name" id="fc-name">—</div>
               <div class="fc-arabic" id="fc-arabic">—</div>
               <div class="fc-opening" id="fc-opening">—</div>
-              <div class="fc-hint">click to flip back</div>
+              <div class="fc-hint"><kbd>←</kbd> fail · <kbd>→</kbd> pass</div>
             </div>
           </div>
         </div>
-        <div class="fc-nav">
-          <button class="btn" onclick="prevCard()">← prev</button>
-          <button class="btn" style="border-color:rgba(255,59,48,0.3);color:rgba(255,110,100,0.9)"
-            onclick="markUnknown()">✗ don't know</button>
-          <button class="btn" style="border-color:rgba(74,222,128,0.3);color:#4ade80" onclick="markKnown()">✓ know
-            it</button>
-          <button class="btn" onclick="nextCard()">next →</button>
+
+        <!-- Nav: fail left, flip center, pass right -->
+        <div class="fc-nav" id="fp-nav">
+          <button class="fc-btn fail" id="lb-btn-fail" onclick="lbMarkFail()" disabled>✗ fail</button>
+          <button class="fc-btn fc-btn-flip" id="lb-btn-flip" onclick="lbFlip()">flip card</button>
+          <button class="fc-btn pass" id="lb-btn-pass" onclick="lbMarkPass()" disabled>✓ pass</button>
         </div>
-        <div class="fc-score">
-          <div class="fc-score-inner">
-            <span class="score-known" id="score-known">✓ 0</span>
-            <span style="color:var(--text-muted);font-family:var(--mono);font-size:12px">/</span>
-            <span class="score-unknown" id="score-unknown">✗ 0</span>
-          </div>
+
+        <!-- Session done overlay -->
+        <div class="fc-complete" id="fp-complete">
+          <div class="fc-complete-icon" id="fp-complete-icon">✦</div>
+          <div class="fc-complete-title" id="fp-complete-title">Session done</div>
+          <div class="fc-complete-sub" id="fp-complete-sub"></div>
+          <div class="fc-complete-actions" id="fp-complete-actions"></div>
         </div>
       </div>
 
@@ -2801,7 +3056,8 @@
     }
 
     function renderKnownAyat() {
-      const q = _ayahFilterQ;
+      const inp = document.getElementById('ayah-search-in');
+      const q = inp ? inp.value.toLowerCase() : _ayahFilterQ;
       // Build unified list with type+index preserved, then sort
       const all = [];
       D.knownAyat.qiraat.forEach((a, i) => all.push({ label: a, type: 'qiraat', idx: i }));
@@ -2903,7 +3159,7 @@
 
     // ── FAWATIH ──────────────────────────────────────────────────
     const FAWATIH = [
-      { n: 1, name: "Al-Fatihah", arabic: "بِسْمِ ٱللَّهِ", opening: "Bismillah ir-Rahman ir-Raheem" },
+      { n: 1, name: "Al-Fatihah", arabic: "بِسْمِ ٱللَّهِ", opening: "Bismillah ir-Rahman ir-Raheem — Alhamdu lillahi" },
       { n: 2, name: "Al-Baqarah", arabic: "الٓمٓ", opening: "Alif Lam Meem — dhalika al-kitabu" },
       { n: 3, name: "Ali 'Imran", arabic: "الٓمٓ", opening: "Alif Lam Meem — Allahu la ilaha illa Huwa" },
       { n: 4, name: "An-Nisa", arabic: "يَٰٓأَيُّهَا ٱلنَّاسُ", opening: "Ya ayyuhan nasu ittaqu rabbakum" },
@@ -3045,46 +3301,446 @@
       });
       return known;
     }
-    let fawatihDeck = [], fawatihIdx = 0, fMode = 'all', fawatihKnown = 0, fawatihUnknown = 0;
+    // ── LEITNER BOX SYSTEM ───────────────────────────────────────────
+    // Persistence key separate from main data so it survives reloads
+    const LB_KEY = 'hifz_leitner_v1';
+    // Frequency: box N drilled every Nth sessions
+    const LB_FREQ = [0, 1, 2, 4, 8, 16]; // index = box number (1-5)
 
-    function initDeck() {
-      fawatihDeck = fMode === 'known' ? FAWATIH.filter(f => getKnownSurahSet().has(f.n)) : [...FAWATIH];
-      fawatihIdx = 0; fawatihKnown = 0; fawatihUnknown = 0;
-      document.getElementById('flashcard').classList.remove('flipped');
-      updateFawatihCard();
+    let lbMode = 'all'; // 'all' | 'known'
+
+    // Per-card state: { box: 1-5 }
+    // Persisted as { [surahN]: box }
+    let lbCards = {}; // loaded from LS
+    let lbSessionNum = 1; // which session number (persisted)
+
+    // Session-level state (not persisted)
+    let lbQueue = [];      // cards to drill this session, in order
+    let lbQueueIdx = 0;    // current position in queue
+    let lbPassCount = 0;
+    let lbFailCount = 0;
+    let lbSessionActive = false;
+    let lbFlipped = false;  // track flip state manually (not via CSS class directly)
+    let lbTransitioning = false; // guard against double-clicks during animation
+
+    function lbLoad() {
+      // Load from localStorage cache (npoint pull happens async after init)
+      const s = localStorage.getItem(LB_KEY);
+      if (s) {
+        try {
+          const p = JSON.parse(s);
+          lbCards = p.cards || {};
+          lbSessionNum = p.sessionNum || 1;
+        } catch(e) {}
+      }
     }
-    function shuffleDeck() {
-      for (let i = fawatihDeck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[fawatihDeck[i], fawatihDeck[j]] = [fawatihDeck[j], fawatihDeck[i]]; }
-      fawatihIdx = 0; document.getElementById('flashcard').classList.remove('flipped'); updateFawatihCard();
+
+    async function lbSave() {
+      const payload = { cards: lbCards, sessionNum: lbSessionNum };
+      // Always write to localStorage as fast cache
+      localStorage.setItem(LB_KEY, JSON.stringify(payload));
+      // Push to npoint if bin is configured
+      if (!npBin) return;
+      try {
+        // Merge into the main D object under a leitner key, then push
+        D.leitner = payload;
+        await npPush();
+      } catch(e) { console.warn('lbSave npoint error', e); }
     }
-    function updateFawatihCard() {
-      if (!fawatihDeck.length) return;
-      const c = fawatihDeck[fawatihIdx];
-      const s = String(c.n);
-      document.getElementById('fc-num').innerHTML = s.slice(0, -1) + '<span class="accent">' + s.slice(-1) + '</span>';
-      document.getElementById('fc-name').textContent = c.name;
-      document.getElementById('fc-arabic').textContent = c.arabic;
-      document.getElementById('fc-opening').textContent = c.opening;
-      document.getElementById('score-known').textContent = `✓ ${fawatihKnown}`;
-      document.getElementById('score-unknown').textContent = `✗ ${fawatihUnknown}`;
-      const isKnown = getKnownSurahSet().has(c.n);
-      const ind = document.getElementById('fc-known-ind');
-      if (ind) { ind.textContent = isKnown ? '● known' : '○ not known'; ind.style.color = isKnown ? 'rgba(74,222,128,0.8)' : 'rgba(255,255,255,0.2)'; }
+
+    async function lbPullFromNpoint() {
+      if (!npBin) return;
+      try {
+        const r = await fetch(NP_BASE + npBin);
+        if (!r.ok) return;
+        const remote = await r.json();
+        if (remote && remote.leitner) {
+          lbCards = remote.leitner.cards || {};
+          lbSessionNum = remote.leitner.sessionNum || 1;
+          localStorage.setItem(LB_KEY, JSON.stringify(remote.leitner));
+          lbRenderBoxes();
+          lbUpdateBanner();
+        }
+      } catch(e) { console.warn('lbPull error', e); }
     }
-    function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
-    function nextCard() { document.getElementById('flashcard').classList.remove('flipped'); fawatihIdx = (fawatihIdx + 1) % fawatihDeck.length; setTimeout(updateFawatihCard, 150); }
-    function prevCard() { document.getElementById('flashcard').classList.remove('flipped'); fawatihIdx = (fawatihIdx - 1 + fawatihDeck.length) % fawatihDeck.length; setTimeout(updateFawatihCard, 150); }
-    function markKnown() { fawatihKnown++; nextCard(); }
-    function markUnknown() { fawatihUnknown++; nextCard(); }
-    function resetScore() { fawatihKnown = 0; fawatihUnknown = 0; updateFawatihCard(); }
+
+    function lbGetBox(surahN) {
+      return lbCards[surahN] || 1;
+    }
+
+    function lbSetBox(surahN, box) {
+      lbCards[surahN] = Math.max(1, Math.min(5, box));
+      lbSave();
+    }
+
+    function lbGetDeck() {
+      const all = lbMode === 'known'
+        ? FAWATIH.filter(f => getKnownSurahSet().has(f.n))
+        : [...FAWATIH];
+      return all;
+    }
+
+    function lbSetMode(mode) {
+      lbMode = mode;
+      document.getElementById('fbtn-all').className   = 'btn' + (lbMode === 'all'   ? ' primary' : '');
+      document.getElementById('fbtn-known').className = 'btn' + (lbMode === 'known' ? ' primary' : '');
+      lbStartSession();
+    }
+
+    // Build this session's queue: box 1 always, box N if sessionNum % freq === 0
+    function lbBuildQueue() {
+      const deck = lbGetDeck();
+      const queue = [];
+      for (const card of deck) {
+        const box = lbGetBox(card.n);
+        const freq = LB_FREQ[box];
+        if (lbSessionNum % freq === 0) {
+          queue.push(card);
+        }
+      }
+      // Shuffle
+      for (let i = queue.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [queue[i], queue[j]] = [queue[j], queue[i]];
+      }
+      return queue;
+    }
+
+    function lbStartSession() {
+      lbQueue = lbBuildQueue();
+      if (lbQueue.length === 0) {
+        lbSessionNum++;
+        lbSave();
+        lbQueue = lbBuildQueue();
+        if (lbQueue.length === 0) {
+          lbShowComplete('mastered');
+          return;
+        }
+      }
+      lbQueueIdx = 0;
+      lbPassCount = 0;
+      lbFailCount = 0;
+      lbSessionActive = true;
+      lbTransitioning = false;
+
+      // Hard-reset card flip state — remove ALL transition classes first,
+      // then force a reflow so the browser doesn't animate from flipped to unflipped
+      const fc = document.getElementById('flashcard');
+      fc.classList.remove('animating', 'is-flipped', 'pulse-pass', 'shake-fail');
+      void fc.offsetWidth; // force reflow — flushes pending CSS transitions
+      lbFlipped = false;
+
+      document.getElementById('lb-btn-pass').disabled = true;
+      document.getElementById('lb-btn-fail').disabled = true;
+      document.getElementById('lb-btn-flip').disabled = false;
+
+      document.getElementById('fp-complete').classList.remove('visible');
+      document.getElementById('fp-card-deck').classList.remove('hidden');
+      document.getElementById('fp-nav').classList.remove('hidden');
+
+      lbRenderCard(false);
+      lbRenderBoxes();
+      lbUpdateBanner();
+      lbUpdateBar();
+    }
+
+    // Flip: update content BEFORE flipping (front is always next card, back is revealed answer)
+    // This eliminates the "flash of next card back" bug:
+    // We NEVER show the back until the user explicitly flips.
+    function lbFlip() {
+      if (lbTransitioning) return;
+      if (lbFlipped) return; // already flipped, don't flip back (pass/fail do that)
+
+      const fc = document.getElementById('flashcard');
+      lbFlipped = true;
+      lbTransitioning = true;
+      fc.classList.add('animating');
+      fc.classList.add('is-flipped');
+
+      // Enable pass/fail
+      document.getElementById('lb-btn-pass').disabled = false;
+      document.getElementById('lb-btn-fail').disabled = false;
+      document.getElementById('lb-btn-flip').disabled = true;
+
+      setTimeout(() => {
+        lbTransitioning = false;
+        fc.classList.remove('animating');
+      }, 430);
+    }
+
+    function lbMarkPass() {
+      if (lbTransitioning || !lbFlipped) return;
+      const card = lbQueue[lbQueueIdx];
+      lbPassCount++;
+
+      const oldBox = lbGetBox(card.n);
+      lbSetBox(card.n, oldBox + 1);
+
+      // Visual feedback — pulse green, then advance
+      const fc = document.getElementById('flashcard');
+      fc.classList.add('pulse-pass');
+
+      _lbAdvance();
+    }
+
+    function lbMarkFail() {
+      if (lbTransitioning || !lbFlipped) return;
+      const card = lbQueue[lbQueueIdx];
+      lbFailCount++;
+
+      lbSetBox(card.n, 1); // back to box 1
+
+      const fc = document.getElementById('flashcard');
+      const back = document.getElementById('fc-back');
+      fc.classList.remove('shake-fail');
+      void fc.offsetWidth;
+      fc.classList.add('shake-fail');
+      back.classList.add('fail-glow');
+      setTimeout(() => back.classList.remove('fail-glow'), 500);
+
+      _lbAdvance();
+    }
+
+    function _lbAdvance() {
+      if (lbTransitioning) return;
+      lbTransitioning = true;
+
+      const fc = document.getElementById('flashcard');
+
+      // Step 1: flip back to front (showing BLANK / next card number, not yet loaded)
+      setTimeout(() => {
+        fc.classList.add('animating');
+        fc.classList.remove('is-flipped');
+        lbFlipped = false;
+        // Disable pass/fail, re-enable flip
+        document.getElementById('lb-btn-pass').disabled = true;
+        document.getElementById('lb-btn-fail').disabled = true;
+        document.getElementById('lb-btn-flip').disabled = false;
+
+        // Step 2: after flip animation completes, load NEXT card content
+        setTimeout(() => {
+          fc.classList.remove('animating', 'pulse-pass', 'shake-fail');
+          lbQueueIdx++;
+
+          if (lbQueueIdx >= lbQueue.length) {
+            lbTransitioning = false;
+            lbEndSession();
+          } else {
+            lbRenderCard(false);
+            lbRenderBoxes();
+            lbUpdateBanner();
+            lbUpdateBar();
+            lbTransitioning = false;
+          }
+        }, 440); // wait for flip animation
+      }, 60); // tiny delay so pulse/shake is visible
+    }
+
+    function lbRenderCard(revealed) {
+      const card = lbQueue[lbQueueIdx];
+      if (!card) return;
+
+      const s = String(card.n);
+      document.getElementById('fc-num').innerHTML =
+        s.slice(0,-1) + '<span class="accent">' + s.slice(-1) + '</span>';
+
+      const box = lbGetBox(card.n);
+      document.getElementById('fc-box-badge').textContent = 'BOX ' + box;
+
+      document.getElementById('fc-name').textContent    = card.name;
+      document.getElementById('fc-arabic').textContent  = card.arabic;
+      document.getElementById('fc-opening').textContent = card.opening;
+    }
+
+    function lbRenderBoxes() {
+      const deck = lbGetDeck();
+      const counts = {1:0, 2:0, 3:0, 4:0, 5:0};
+      for (const card of deck) {
+        const box = lbGetBox(card.n);
+        counts[box] = (counts[box] || 0) + 1;
+      }
+      const total = deck.length || 1;
+
+      for (let b = 1; b <= 5; b++) {
+        document.getElementById('lb-count-' + b).textContent = counts[b] || 0;
+        const pct = ((counts[b] || 0) / total * 100).toFixed(1);
+        document.getElementById('lb-fill-' + b).style.width = pct + '%';
+
+        const boxEl = document.getElementById('lb-box-' + b);
+        // Highlight which boxes are due this session
+        const freq = LB_FREQ[b];
+        const due = freq && (lbSessionNum % freq === 0);
+        boxEl.classList.toggle('lb-active', due);
+      }
+    }
+
+    function lbUpdateBanner() {
+      // Session banner removed — nothing to update
+    }
+
+    function lbUpdateBar() {
+      const pct = lbQueue.length > 0 ? (lbQueueIdx / lbQueue.length * 100) : 0;
+      document.getElementById('fp-bar').style.width = Math.min(100, pct).toFixed(1) + '%';
+    }
+
+    function lbEndSession() {
+      lbSessionNum++;
+      lbSave();
+      lbSessionActive = false;
+
+      // Count mastered
+      const deck = lbGetDeck();
+      const mastered = deck.filter(c => lbGetBox(c.n) === 5).length;
+
+      lbShowComplete('session');
+      lbRenderBoxes();
+
+      // Set bar to 100
+      document.getElementById('fp-bar').style.width = '100%';
+    }
+
+    function lbShowComplete(type) {
+      document.getElementById('fp-card-deck').classList.add('hidden');
+      document.getElementById('fp-nav').classList.add('hidden');
+      document.getElementById('fp-complete').classList.add('visible');
+
+      const icon  = document.getElementById('fp-complete-icon');
+      const title = document.getElementById('fp-complete-title');
+      const sub   = document.getElementById('fp-complete-sub');
+      const acts  = document.getElementById('fp-complete-actions');
+
+      const deck = lbGetDeck();
+      const mastered = deck.filter(c => lbGetBox(c.n) === 5).length;
+
+      if (type === 'mastered') {
+        icon.textContent  = '✦';
+        title.textContent = 'All mastered';
+        sub.innerHTML     = `No cards due this session. Try again later, or reset boxes.`;
+        acts.innerHTML    = `<button class="fc-btn" onclick="lbResetBoxes()">Reset boxes</button>`;
+      } else {
+        icon.textContent  = '✦';
+        title.textContent = 'Session ' + (lbSessionNum - 1) + ' complete';
+        sub.innerHTML     = `<b>${lbPassCount}</b> passed · <b>${lbFailCount}</b> failed<br>
+          <b>${mastered}</b> / <b>${deck.length}</b> mastered (box 5)<br>
+          Next session: <b>${lbSessionNum}</b>`;
+        acts.innerHTML    = `<button class="fc-btn pass" onclick="lbStartSession()">▶ Next session</button>
+          <button class="fc-btn" onclick="lbResetBoxes()">Reset boxes</button>`;
+      }
+    }
+
+    function lbResetBoxes() {
+      if (!confirm('Reset all Leitner box data? Cards go back to box 1.')) return;
+      lbCards = {};
+      lbSessionNum = 1;
+      lbSave();
+      lbSessionActive = false;
+      document.getElementById('fp-complete').classList.remove('visible');
+      document.getElementById('fp-card-deck').classList.remove('hidden');
+      document.getElementById('fp-nav').classList.remove('hidden');
+      const fc = document.getElementById('flashcard');
+      fc.classList.remove('is-flipped','animating','pulse-pass','shake-fail');
+      lbFlipped = false;
+      lbTransitioning = false;
+      document.getElementById('lb-btn-pass').disabled = true;
+      document.getElementById('lb-btn-fail').disabled = true;
+      document.getElementById('lb-btn-flip').disabled = false;
+      document.getElementById('fp-bar').style.width = '0%';
+      lbQueue = []; lbQueueIdx = 0; lbPassCount = 0; lbFailCount = 0;
+      lbRenderBoxes();
+      lbStartSession();
+    }
+
+    // ── Legacy stubs ──────────────────────────────────────────────
+    function initDeck() { lbLoad(); lbRenderBoxes(); lbStartSession(); }
+    function updateFModeButtons() {}
+    function shuffleDeck() {}
+    function flipCard() { lbFlip(); }
+    function nextCard() {}
+    function prevCard() {}
+    function markKnown()   { lbMarkPass(); }
+    function markUnknown() { lbMarkFail(); }
+    function resetScore()  { lbResetBoxes(); }
+    let fShuffled = false;
+    let fMode = 'all';
+
+    // ── KEYBOARD SHORTCUTS ───────────────────────────────────────
+    // Tab order for 1-4 number keys
+    const TAB_KEYS = { '1': 'plan', '2': 'review', '3': 'fawatih', '4': 'file' };
+
+    document.addEventListener('keydown', function(e) {
+      const tag = (e.target || {}).tagName;
+      const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable;
+      const modalOpen = document.getElementById('modal').classList.contains('open')
+                     || document.getElementById('add-ayah-modal').classList.contains('open')
+                     || document.getElementById('ayah-edit-modal').classList.contains('open');
+
+      // ── Global shortcuts (work even in inputs) ──
+      if (e.key === 'Escape') {
+        if (document.getElementById('modal').classList.contains('open')) { closeModal(); return; }
+        if (document.getElementById('add-ayah-modal').classList.contains('open')) { closeAddAyahModal(); return; }
+        if (document.getElementById('ayah-edit-modal').classList.contains('open')) { closeAyahEditModal(); return; }
+        closeAllSels();
+        return;
+      }
+
+      // ── Block all others when modal open or in input ──
+      if (modalOpen || inInput) return;
+
+      // ── Tab navigation: 1-4 ──
+      if (TAB_KEYS[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        switchTab(TAB_KEYS[e.key]);
+        return;
+      }
+
+      // ── Fawatih card drill shortcuts ──
+      const onFawatih = document.getElementById('sec-fawatih').classList.contains('active');
+      if (onFawatih) {
+        // Space / Enter → flip card (if not flipped); if already flipped, mark pass
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          if (!lbFlipped) { lbFlip(); }
+          return;
+        }
+        // Right arrow / K / L → pass (known)
+        if (e.key === 'ArrowRight' || e.key === 'k' || e.key === 'l') {
+          e.preventDefault();
+          lbMarkPass();
+          return;
+        }
+        // Left arrow / J / H → fail (not known)
+        if (e.key === 'ArrowLeft' || e.key === 'j' || e.key === 'h') {
+          e.preventDefault();
+          lbMarkFail();
+          return;
+        }
+      }
+
+      // ── Review / Plan shortcuts ──
+      const onReview = document.getElementById('sec-review').classList.contains('active');
+      const onPlan   = document.getElementById('sec-plan').classList.contains('active');
+
+      // A → open Add Page modal (Plan tab)
+      if ((e.key === 'a' || e.key === 'A') && onPlan) {
+        openModal(null);
+        return;
+      }
+      // / → focus search (Review tab)
+      if (e.key === '/' && onReview) {
+        e.preventDefault();
+        const s = document.getElementById('rev-search');
+        if (s) { s.focus(); s.select(); }
+        return;
+      }
+    });
 
     // ── INIT ─────────────────────────────────────────────────────
     loadLS();
+    lbLoad();
     initOrbs();
     renderAll();
     initDeck();
     updateStatus();
-    if (npBin) { npPull(); }
+    if (npBin) { npPull().then(() => lbPullFromNpoint()); }
   </script>
 </body>
 
