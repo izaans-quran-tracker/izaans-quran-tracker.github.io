@@ -1310,6 +1310,14 @@
       letter-spacing: .07em;
       margin-top: 8px
     }
+    .fc-front-context {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      margin-top: 6px;
+      letter-spacing: .04em;
+      display: none
+    }
     .fc-surah-name {
       font-size: 19px;
       font-weight: 600;
@@ -1439,6 +1447,60 @@
       border-color: rgba(255,59,48,0.18)
     }
     .lb-reset-btn:hover { color: rgba(255,100,90,0.85); border-color: rgba(255,59,48,0.35); background: rgba(255,59,48,0.06) }
+
+    /* ── New drill-type card elements ── */
+    .fc-front-label {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      line-height: 1.2;
+      display: none
+    }
+    .fc-front-arabic {
+      font-family: var(--arabic);
+      font-size: 24px;
+      color: var(--text);
+      text-align: center;
+      direction: rtl;
+      line-height: 1.6;
+      max-width: 320px;
+      display: none
+    }
+    .fc-back-count {
+      font-size: 60px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      line-height: 1;
+      display: none
+    }
+    .fc-back-count .accent { color: var(--red) }
+    .fc-back-ref {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1;
+      display: none
+    }
+    .fc-back-ref .accent { color: var(--red) }
+    .fc-back-translit {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.7;
+      max-width: 300px;
+      display: none
+    }
+    .lb-mode-sep {
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 0 2px;
+      align-self: center
+    }
 
     /* ── PLAN ── */
     .plan-grid {
@@ -2068,16 +2130,89 @@
       width: 40px
     }
 
-    ::-webkit-scrollbar {
-      width: 4px
+    /* ── NPOINT SETUP MODAL ── */
+    .np-setup-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
     }
-
-    ::-webkit-scrollbar-track {
-      background: transparent
+    .np-setup-backdrop.open { display: flex }
+    .np-setup-modal {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 24px;
+      border: 0.5px solid var(--glass-border);
+      background: rgba(10, 3, 3, 0.96);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.07)
     }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.08);
+    .np-setup-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px
+    }
+    .np-setup-sub {
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.7
+    }
+    .np-setup-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px
+    }
+    .np-setup-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start
+    }
+    .np-step-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--red);
+      background: var(--done-bg);
+      border: 0.5px solid var(--done-border);
+      border-radius: 6px;
+      padding: 2px 7px;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+    .np-step-text {
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--text-dim);
+      line-height: 1.65
+    }
+    .np-step-text a {
+      color: rgba(255,140,130,0.9);
+      text-decoration: none
+    }
+    .np-step-text a:hover { text-decoration: underline }
+    .np-step-text b { color: var(--text) }
+    .np-setup-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px
+    }
+    .np-setup-note {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      margin-top: 6px
+    }
       border-radius: 2px
     }
   </style>
@@ -2096,6 +2231,42 @@
     <div class="orb o8"></div>
   </div>
   <div class="grain"></div>
+
+  <!-- NPOINT SETUP MODAL -->
+  <div class="np-setup-backdrop" id="np-setup-modal">
+    <div class="np-setup-modal">
+      <div class="np-setup-title">Connect Cloud Sync</div>
+      <div class="np-setup-sub">Your data needs a free cloud bin to sync across devices. Takes 30 seconds.</div>
+      <div class="np-setup-steps">
+        <div class="np-setup-step">
+          <span class="np-step-num">1</span>
+          <span class="np-step-text">Go to <a href="https://www.npoint.io" target="_blank">npoint.io</a> and click <b>New JSON Bin</b></span>
+        </div>
+        <div class="np-setup-step">
+          <span class="np-step-num">2</span>
+          <span class="np-step-text">Paste <b>{}</b> into the editor and click <b>Save</b></span>
+        </div>
+        <div class="np-setup-step">
+          <span class="np-step-num">3</span>
+          <span class="np-step-text">Copy the <b>bin ID</b> from the URL — it looks like <b>abc123def456</b> (the part after npoint.io/)</span>
+        </div>
+        <div class="np-setup-step">
+          <span class="np-step-num">4</span>
+          <span class="np-step-text">Paste it below and click <b>Connect</b></span>
+        </div>
+      </div>
+      <div class="np-setup-input-row">
+        <input class="ginput" id="np-setup-input" placeholder="Paste bin ID here…"
+          style="flex:1;font-family:var(--mono);font-size:13px"
+          onkeydown="if(event.key==='Enter')npSetupConnect()" />
+        <button class="btn primary" onclick="npSetupConnect()">Connect</button>
+      </div>
+      <div class="np-setup-note" id="np-setup-note"></div>
+      <div style="margin-top:16px;text-align:right">
+        <button class="modal-cancel" onclick="npSetupSkip()">Skip for now</button>
+      </div>
+    </div>
+  </div>
 
   <!-- AYAH EDIT MODAL -->
   <div class="ayah-edit-modal-backdrop" id="ayah-edit-modal">
@@ -2223,18 +2394,18 @@
             <div class="plan-box-title">How to Memorize</div>
             <div class="memorize-steps">
               <div class="mem-phase">
-                <div class="mem-phase-title">Passive</div>
-                <div class="mem-step">Listen to the next group (2–10 ayahs) on loop with Mishary recitation, <b>changing start/end ayah</b> to
-                  avoid anchored wrong memory</div>
-              </div>
-              <div class="mem-phase">
-                <div class="mem-phase-title">Active — once you know the full tune</div>
-                <div class="mem-step"><b>1.</b> Listen to next 2 ayahs 10× while looking at verse number (split long
-                  ayahs at stopping points)</div>
+                <div class="mem-phase-title">Phase 1 — Mishary 1 (clear, tajweed-focused)</div>
+                <div class="mem-step" style="margin-bottom:6px"><b>Passive:</b> Listen to the next group (2–10 ayahs) on loop, <b>changing start/end ayah</b> to avoid anchoring wrong memory. Goal: internalize correct pronunciation and tajweed.</div>
+                <div class="mem-step"><b>Active:</b></div>
+                <div class="mem-step"><b>1.</b> Listen to next 2 ayahs 10× while looking at verse number (split long ayahs at stopping points)</div>
                 <div class="mem-step"><b>2a.</b> Read verse 5–25× until smooth</div>
                 <div class="mem-step"><b>2b.</b> Recite along 5–25×</div>
                 <div class="mem-step"><b>2c.</b> Recite on Tarteel and note mistakes/hesitations</div>
                 <div class="mem-step"><b>3.</b> Repeat for pair: 1+2, then 2+3, then 3+4…</div>
+              </div>
+              <div class="mem-phase">
+                <div class="mem-phase-title">Phase 2 — Mishary 2 (style-focused, once Phase 1 group is memorized)</div>
+                <div class="mem-step"><b>Passive:</b> Listen to the same group (2–10 ayahs) on loop with Mishary 2, <b>changing start/end ayah</b> to avoid anchoring wrong memory. Goal: re-memorize with good recitation style.</div>
               </div>
             </div>
           </div>
@@ -2277,9 +2448,12 @@
       <!-- FAWATIH -->
       <div class="section" id="sec-fawatih">
         
-        <!-- Controls: mode buttons left, reset right -->
+        <!-- Controls: type selector, mode, reset -->
         <div class="fawatih-controls">
-          <button class="btn" id="fbtn-all" onclick="lbSetMode('all')">All 114</button>
+          <button class="btn primary" id="fbtn-type-openings" onclick="lbSetType('openings')">Openings</button>
+          <button class="btn" id="fbtn-type-verse-refs" onclick="lbSetType('verse-refs')">Verse Refs</button>
+          <span class="lb-mode-sep" id="fbtn-mode-sep">|</span>
+          <button class="btn primary" id="fbtn-all" onclick="lbSetMode('all')">All 114</button>
           <button class="btn" id="fbtn-known" onclick="lbSetMode('known')">Known only</button>
           <button class="btn lb-reset-btn" onclick="lbResetBoxes()" style="margin-left:auto">⚠ reset boxes</button>
         </div>
@@ -2287,27 +2461,27 @@
         <!-- 5 Leitner boxes -->
         <div class="lb-strip" id="lb-strip">
           <div class="lb-box" id="lb-box-1">
-            <div class="lb-box-label"><span>BOX 1</span><span class="lb-freq">every round</span></div>
+            <div class="lb-box-label"><span>BOX 1</span></div>
             <div class="lb-box-num" id="lb-count-1">0</div>
             <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-1" style="width:0%"></div></div>
           </div>
           <div class="lb-box" id="lb-box-2">
-            <div class="lb-box-label"><span>BOX 2</span><span class="lb-freq">every 2nd</span></div>
+            <div class="lb-box-label"><span>BOX 2</span></div>
             <div class="lb-box-num" id="lb-count-2">0</div>
             <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-2" style="width:0%"></div></div>
           </div>
           <div class="lb-box" id="lb-box-3">
-            <div class="lb-box-label"><span>BOX 3</span><span class="lb-freq">every 4th</span></div>
+            <div class="lb-box-label"><span>BOX 3</span></div>
             <div class="lb-box-num" id="lb-count-3">0</div>
             <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-3" style="width:0%"></div></div>
           </div>
           <div class="lb-box" id="lb-box-4">
-            <div class="lb-box-label"><span>BOX 4</span><span class="lb-freq">every 8th</span></div>
+            <div class="lb-box-label"><span>BOX 4</span></div>
             <div class="lb-box-num" id="lb-count-4">0</div>
             <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-4" style="width:0%"></div></div>
           </div>
           <div class="lb-box" id="lb-box-5">
-            <div class="lb-box-label"><span>BOX 5</span><span class="lb-freq">every 16th</span></div>
+            <div class="lb-box-label"><span>BOX 5</span></div>
             <div class="lb-box-num" id="lb-count-5">0</div>
             <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-5" style="width:0%"></div></div>
           </div>
@@ -2324,6 +2498,9 @@
           <div class="flashcard" id="flashcard">
             <div class="fc-face fc-front" id="fc-front">
               <div class="fc-num" id="fc-num">—</div>
+              <div class="fc-front-context" id="fc-front-context"></div>
+              <div class="fc-front-label" id="fc-front-label"></div>
+              <div class="fc-front-arabic" id="fc-front-arabic"></div>
               <div class="fc-box-badge" id="fc-box-badge"></div>
               <div class="fc-hint">flip to reveal · <kbd>Space</kbd></div>
             </div>
@@ -2331,6 +2508,9 @@
               <div class="fc-surah-name" id="fc-name">—</div>
               <div class="fc-arabic" id="fc-arabic">—</div>
               <div class="fc-opening" id="fc-opening">—</div>
+              <div class="fc-back-translit" id="fc-back-translit"></div>
+              <div class="fc-back-count" id="fc-back-count"></div>
+              <div class="fc-back-ref" id="fc-back-ref"></div>
               <div class="fc-hint"><kbd>←</kbd> fail · <kbd>→</kbd> pass</div>
             </div>
           </div>
@@ -2408,7 +2588,11 @@
       pages: [],
       recentQueue: [],
       knownAyat: { qiraat: [], memory: [] },
-      plan: { upcoming: [] }
+      plan: { upcoming: [] },
+      leitner: {
+        openings:     { cards: {}, sessionNum: 1 },
+        'verse-refs': { cards: {}, sessionNum: 1 }
+      }
     };
     let D = JSON.parse(JSON.stringify(DEFAULT_D));
     let dirty = false, syncing = false, saveTimer;
@@ -2416,12 +2600,43 @@
 
     function loadLS() {
       const s = localStorage.getItem(LS);
-      if (s) { try { const p = JSON.parse(s); D = Object.assign(JSON.parse(JSON.stringify(DEFAULT_D)), p); if (!D.recentQueue) D.recentQueue = []; } catch (e) { } }
+      if (s) { try { const p = JSON.parse(s); D = Object.assign(JSON.parse(JSON.stringify(DEFAULT_D)), p); if (!D.recentQueue) D.recentQueue = []; if (!D.leitner) D.leitner = JSON.parse(JSON.stringify(DEFAULT_D.leitner)); migrateSourceLabels(); } catch (e) { } }
+      applyLeitnerFromD();
+    }
+    // Migrate old single-string sourceLabel → sourceLabels array
+    function migrateSourceLabels() {
+      D.pages.forEach(pg => {
+        if (!pg.sourceLabels) {
+          pg.sourceLabels = pg.sourceLabel ? [pg.sourceLabel] : [];
+          delete pg.sourceLabel;
+        }
+      });
+    }
+    // Copy D.leitner → allLbState (called after any load/pull)
+    function applyLeitnerFromD() {
+      for (const type of ['openings', 'verse-refs']) {
+        const src = D.leitner && D.leitner[type];
+        if (src) {
+          allLbState[type].cards      = src.cards      || {};
+          allLbState[type].sessionNum = src.sessionNum || 1;
+        }
+      }
+      // Migrate old hifz_leitner_v1 localStorage → openings (one-time)
+      const old = localStorage.getItem('hifz_leitner_v1');
+      if (old && Object.keys(allLbState.openings.cards).length === 0) try {
+        const p = JSON.parse(old);
+        if (p.cards) {
+          allLbState.openings.cards      = p.cards;
+          allLbState.openings.sessionNum = p.sessionNum || 1;
+          localStorage.removeItem('hifz_leitner_v1');
+        }
+      } catch(e) {}
     }
     function persist() {
       dirty = true; updateStatus();
+      D.leitner = JSON.parse(JSON.stringify(allLbState)); // always bundle leitner
       localStorage.setItem(LS, JSON.stringify(D));
-      if (npBin) { clearTimeout(saveTimer); saveTimer = setTimeout(npPush, 900); }
+      if (npBin && npBin !== 'YOUR_BIN_ID_HERE') { clearTimeout(saveTimer); saveTimer = setTimeout(npPush, 900); }
     }
     async function npPush() {
       if (!npBin || syncing) return;
@@ -2433,7 +2648,7 @@
       syncing = false; updateStatus();
     }
     async function npPull() {
-      if (!npBin) return false;
+      if (!npBin || npBin === 'YOUR_BIN_ID_HERE') return false;
       try {
         const r = await fetch(NP_BASE + npBin);
         if (!r.ok) return false;
@@ -2441,6 +2656,9 @@
         if (typeof remote === 'object' && remote !== null && ('pages' in remote || 'knownAyat' in remote)) {
           D = Object.assign(JSON.parse(JSON.stringify(DEFAULT_D)), remote);
           if (!D.recentQueue) D.recentQueue = [];
+          if (!D.leitner) D.leitner = JSON.parse(JSON.stringify(DEFAULT_D.leitner));
+          migrateSourceLabels();
+          applyLeitnerFromD();
           localStorage.setItem(LS, JSON.stringify(D));
           dirty = false; updateStatus(); renderAll(); initDeck();
           return true;
@@ -2619,18 +2837,85 @@
   </table></div>`;
     }
 
+    // ── NPOINT SETUP MODAL ───────────────────────────────────────
+    function checkNpSetup() {
+      const bin = localStorage.getItem('hifz_np_bin');
+      if (!bin || bin === 'YOUR_BIN_ID_HERE') {
+        document.getElementById('np-setup-modal').classList.add('open');
+        setTimeout(() => document.getElementById('np-setup-input').focus(), 100);
+      }
+    }
+    function npSetupSkip() {
+      document.getElementById('np-setup-modal').classList.remove('open');
+    }
+    async function npSetupConnect() {
+      const val = (document.getElementById('np-setup-input').value || '').trim();
+      const note = document.getElementById('np-setup-note');
+      if (!val) { note.textContent = 'Paste a bin ID first.'; return; }
+      note.textContent = 'Connecting…';
+      npBin = val;
+      localStorage.setItem('hifz_np_bin', npBin);
+      document.getElementById('np-bin-input').value = val;
+      updateStatus();
+      const ok = await npPull();
+      if (ok) {
+        note.textContent = '✓ Connected and synced.';
+        setTimeout(() => document.getElementById('np-setup-modal').classList.remove('open'), 800);
+      } else {
+        note.textContent = 'Connected — bin is empty. Your data will push on next change.';
+        setTimeout(() => document.getElementById('np-setup-modal').classList.remove('open'), 1200);
+      }
+    }
+
+    // ── SURGICAL CARD PATCH (no full re-render, preserves breathe animation) ──
+    function patchCard(pNum) {
+      const el = document.getElementById('pc-' + pNum);
+      if (!el) return; // card not in current view — full render will catch it
+      const p = D.pages.find(x => x.page === pNum);
+      if (!p) return;
+      const state = cardState(p);
+      // Update state classes
+      el.classList.remove('state-red', 'state-gold', 'state-both');
+      if (state) el.classList.add('state-' + state);
+      // Update dot classes
+      const dg = el.querySelector('.dot-gold');
+      const dr = el.querySelector('.dot-red');
+      if (dg) dg.classList.toggle('on', !!p.next);
+      if (dr) dr.classList.toggle('on', !!p.done);
+      // Update pnum color (handled by CSS state classes above)
+    }
+
     function toggleDone(e, pNum) {
       e.stopPropagation();
       const allDone = D.pages.length > 0 && D.pages.every(p => p.done);
-      if (allDone) { D.pages.forEach(p => p.done = false); }
-      else { const p = D.pages.find(x => x.page === pNum); if (p) p.done = !p.done; }
-      persist(); renderAll();
+      if (allDone) {
+        D.pages.forEach(p => p.done = false);
+        persist(); renderAll(); // full reset — all cards change
+      } else {
+        const p = D.pages.find(x => x.page === pNum);
+        if (p) p.done = !p.done;
+        persist();
+        patchCard(pNum);
+        // Update reset bar
+        const allNowDone = D.pages.length > 0 && D.pages.every(p => p.done);
+        const rb = document.getElementById('review-reset');
+        if (rb) {
+          rb.textContent = allNowDone ? '// all pages done — tap any red dot to reset all' : '';
+          rb.className = 'reset-bar' + (allNowDone ? ' all-done' : '');
+        }
+      }
     }
     function toggleNext(e, pNum) {
       e.stopPropagation();
       const p = D.pages.find(x => x.page === pNum); if (!p) return;
-      const was = p.next; D.pages.forEach(x => x.next = false); if (!was) p.next = true;
-      persist(); renderAll();
+      const was = p.next;
+      // Find previous next page to un-highlight it
+      const prevNext = D.pages.find(x => x.next);
+      D.pages.forEach(x => x.next = false);
+      if (!was) p.next = true;
+      persist();
+      if (prevNext) patchCard(prevNext.page);
+      patchCard(pNum);
     }
 
     // ── REVIEW ───────────────────────────────────────────────────
@@ -2702,11 +2987,16 @@
     // Given a list of {surah, ayah} verse objects, return array of page cards.
     // Uses /chapters/x for authoritative start pages — never relies on by_page
     // membership to assign verses to pages, eliminating boundary misassignment.
-    async function buildPageCards(verses, rangeLabel, loadEl, fullPageLabel = false) {
+    async function buildPageCards(verses, rangeLabel, loadEl, allKnownKeys = null) {
       if (loadEl) loadEl.textContent = 'Fetching page data…';
       if (!verses.length) return [];
 
       const inputKeys = new Set(verses.map(v => `${v.surah}:${v.ayah}`));
+      // For ln calculation, use the full set of known verse keys when available
+      // so multi-surah pages get an accurate combined line count.
+      const ownershipKeys = allKnownKeys || inputKeys;
+      // Surah metadata used for full-surah label condensing
+      const surahMeta = await getSurahMeta();
 
       // Step 1: find the start page for the first verse using /chapters/x
       // then walk forward page by page, collecting pages that contain any inputKey.
@@ -2753,45 +3043,38 @@
         const pageVerses = await fetchPageData(pageNum);
         if (!pageVerses.length) continue;
 
-        let verseLabel;
-        if (fullPageLabel) {
-          const allPageVs = pageVerses.map(pv => { const [s,a] = pv.verse_key.split(':').map(Number); return {surah:s,ayah:a}; });
-          verseLabel = condenseVerseList(allPageVs);
-        } else {
-          const ownedPageVs = pageVerses
-            .filter(pv => inputKeys.has(pv.verse_key))
-            .map(pv => { const [s,a] = pv.verse_key.split(':').map(Number); return {surah:s,ayah:a}; });
-          verseLabel = condenseVerseList(ownedPageVs);
-          if (!verseLabel) continue; // page has none of our verses
-        }
+        // Label: only verses the user has actually memorised (ownershipKeys)
+        const ownedPageVs = pageVerses
+          .filter(pv => ownershipKeys.has(pv.verse_key))
+          .map(pv => { const [s,a] = pv.verse_key.split(':').map(Number); return {surah:s,ayah:a}; });
+        const verseLabel = condenseVerseList(ownedPageVs, surahMeta);
+        if (!verseLabel) continue; // page has none of our verses
 
-        // ln: full page cards are always *, partial-range cards use 75% ownership
+        // ln: * if ownership covers the whole page, otherwise count owned lines
         let ln = '*';
-        if (!fullPageLabel) {
-          try {
-            const firstPageKey = pageVerses[0].verse_key;
-            const lastPageKey  = pageVerses[pageVerses.length - 1].verse_key;
-            const fullPage     = inputKeys.has(firstPageKey) && inputKeys.has(lastPageKey);
-            if (!fullPage) {
-              const lineTotals   = new Map();
-              const lineRangeOwn = new Map();
-              for (const pv of pageVerses) {
-                const inRange = inputKeys.has(pv.verse_key);
-                for (const w of (pv.words || [])) {
-                  const lnum = w.line_number;
-                  if (lnum == null) continue;
-                  lineTotals.set(lnum, (lineTotals.get(lnum) || 0) + 1);
-                  if (inRange) lineRangeOwn.set(lnum, (lineRangeOwn.get(lnum) || 0) + 1);
-                }
+        try {
+          const firstPageKey = pageVerses[0].verse_key;
+          const lastPageKey  = pageVerses[pageVerses.length - 1].verse_key;
+          const fullPage     = ownershipKeys.has(firstPageKey) && ownershipKeys.has(lastPageKey);
+          if (!fullPage) {
+            const lineTotals   = new Map();
+            const lineRangeOwn = new Map();
+            for (const pv of pageVerses) {
+              const inRange = ownershipKeys.has(pv.verse_key);
+              for (const w of (pv.words || [])) {
+                const lnum = w.line_number;
+                if (lnum == null) continue;
+                lineTotals.set(lnum, (lineTotals.get(lnum) || 0) + 1);
+                if (inRange) lineRangeOwn.set(lnum, (lineRangeOwn.get(lnum) || 0) + 1);
               }
-              let ownedLines = 0;
-              for (const [lnum, total] of lineTotals) {
-                if ((lineRangeOwn.get(lnum) || 0) / total >= 0.75) ownedLines++;
-              }
-              ln = ownedLines > 0 ? String(ownedLines) : '*';
             }
-          } catch(e) {}
-        }
+            let ownedLines = 0;
+            for (const [lnum, total] of lineTotals) {
+              if ((lineRangeOwn.get(lnum) || 0) / total >= 0.75) ownedLines++;
+            }
+            ln = ownedLines > 0 ? String(ownedLines) : '*';
+          }
+        } catch(e) {}
 
         cards.push({ page: pageNum, verseLabel, ln });
       }
@@ -2801,7 +3084,9 @@
     }
 
     // Condense [{surah,ayah}] → compact string like "19:1-33" or "2:255" or "18:110, 19:1-5"
-    function condenseVerseList(verses) {
+    // meta is optional: { [surahN]: verseCount }. When provided, a run that
+    // covers ayah 1 → last ayah of a surah is collapsed to just the surah number.
+    function condenseVerseList(verses, meta) {
       if (!verses.length) return '';
       const parts = [];
       let i = 0;
@@ -2814,8 +3099,10 @@
                verses[j+1].ayah === verses[j].ayah + 1) j++;
         const end = verses[j];
         if (start.surah === end.surah) {
-          if (start.ayah === end.ayah) parts.push(`${start.surah}:${start.ayah}`);
-          else parts.push(`${start.surah}:${start.ayah}-${end.ayah}`);
+          const fullSurah = meta && start.ayah === 1 && end.ayah === meta[start.surah];
+          if (fullSurah)                      parts.push(`${start.surah}`);
+          else if (start.ayah === end.ayah)   parts.push(`${start.surah}:${start.ayah}`);
+          else                                parts.push(`${start.surah}:${start.ayah}-${end.ayah}`);
         } else {
           parts.push(`${start.surah}:${start.ayah}-${end.surah}:${end.ayah}`);
         }
@@ -2917,6 +3204,204 @@
       if (e.target === document.getElementById('add-ayah-modal')) closeAddAyahModal();
     });
 
+    // Synchronous verse-range parser — same logic as parseVerseRange but uses
+    // pre-loaded meta (no API calls). Returns [{surah,ayah}] or null.
+    function parseVerseRangeSync(str, meta) {
+      if (!meta) return null;
+      str = str.trim();
+      const crossMatch = str.match(/^(\d+):(\d+)-(\d+):(\d+)$/);
+      if (crossMatch) {
+        const [,s1,a1,s2,a2] = crossMatch.map(Number);
+        if (!meta[s1] || !meta[s2]) return null;
+        const vs = [];
+        for (let a = a1; a <= meta[s1]; a++) vs.push({surah:s1,ayah:a});
+        for (let s = s1+1; s < s2; s++) for (let a = 1; a <= meta[s]; a++) vs.push({surah:s,ayah:a});
+        for (let a = 1; a <= a2; a++) vs.push({surah:s2,ayah:a});
+        return vs;
+      }
+      const rangeMatch = str.match(/^(\d+):(\d+)-(\d+)$/);
+      if (rangeMatch) {
+        const [,s,a1,a2] = rangeMatch.map(Number);
+        if (!meta[s]) return null;
+        const vs = [];
+        for (let a = a1; a <= a2; a++) vs.push({surah:s,ayah:a});
+        return vs;
+      }
+      const singleMatch = str.match(/^(\d+):(\d+)$/);
+      if (singleMatch) {
+        const [,s,a] = singleMatch.map(Number);
+        if (!meta[s] || a < 1 || a > meta[s]) return null;
+        return [{surah:s,ayah:a}];
+      }
+      const surahRangeMatch = str.match(/^(\d+)-(\d+)$/);
+      if (surahRangeMatch) {
+        const [,s1,s2] = surahRangeMatch.map(Number);
+        if (!meta[s1] || !meta[s2] || s2 < s1) return null;
+        const vs = [];
+        for (let s = s1; s <= s2; s++) for (let a = 1; a <= meta[s]; a++) vs.push({surah:s,ayah:a});
+        return vs;
+      }
+      const surahMatch = str.match(/^(\d+)$/);
+      if (surahMatch) {
+        const s = parseInt(surahMatch[1]);
+        if (!meta[s]) return null;
+        const vs = [];
+        for (let a = 1; a <= meta[s]; a++) vs.push({surah:s,ayah:a});
+        return vs;
+      }
+      return null;
+    }
+
+    // Build a Set of every verse key the user currently has in D.knownAyat.
+    // Used to compute accurate line counts that reflect ALL memorised surahs
+    // on a shared page, not just the surah being added right now.
+    async function buildAllKnownVerseKeys() {
+      const meta = await getSurahMeta();
+      if (!meta) return null;
+      const keys = new Set();
+      const all = [...D.knownAyat.qiraat, ...D.knownAyat.memory];
+      for (const label of all) {
+        const vs = parseVerseRangeSync(label, meta);
+        if (vs) vs.forEach(({ surah, ayah }) => keys.add(`${surah}:${ayah}`));
+      }
+      return keys;
+    }
+
+    // When a knownAyat label is deleted, update all page cards that shared it.
+    // Pages that had ONLY that label → deleted.
+    // Pages that had other labels too → recompute verses + ln from remaining known ayat.
+    async function updatePagesForDeletedLabel(label) {
+      const toDelete   = new Set();
+      const toRecompute = new Set();
+
+      for (const pg of D.pages) {
+        const labels = pg.sourceLabels || (pg.sourceLabel ? [pg.sourceLabel] : []);
+        if (!labels.includes(label)) continue;
+        const remaining = labels.filter(l => l !== label);
+        if (remaining.length === 0) {
+          toDelete.add(pg.page);
+        } else {
+          pg.sourceLabels = remaining;
+          delete pg.sourceLabel;
+          toRecompute.add(pg.page);
+        }
+      }
+
+      D.pages = D.pages.filter(p => !toDelete.has(p.page));
+      D.recentQueue = D.recentQueue.filter(n => !toDelete.has(n));
+
+      if (toRecompute.size > 0) {
+        const allKnownKeys = await buildAllKnownVerseKeys();
+        for (const pageNum of toRecompute) {
+          const pg = D.pages.find(p => p.page === pageNum);
+          if (!pg) continue;
+          // Fetch from cache (already loaded when the surah was added); if missing, fetch now.
+          let pageVerses = _pageCache[pageNum];
+          if (!pageVerses || !pageVerses.length) pageVerses = await fetchPageData(pageNum);
+          if (!pageVerses || !pageVerses.length) continue;
+
+          // Recompute verseLabel from remaining known verses on this page
+          const ownedVs = pageVerses
+            .filter(pv => allKnownKeys && allKnownKeys.has(pv.verse_key))
+            .map(pv => { const [s,a] = pv.verse_key.split(':').map(Number); return {surah:s,ayah:a}; });
+          if (ownedVs.length === 0) {
+            // Edge case: sourceLabels said non-empty but no verses left (stale data) — remove
+            D.pages = D.pages.filter(p => p.page !== pageNum);
+            D.recentQueue = D.recentQueue.filter(n => n !== pageNum);
+            continue;
+          }
+          const meta = await getSurahMeta();
+          pg.verses = condenseVerseList(ownedVs, meta);
+
+          // Recompute ln
+          const firstKey = pageVerses[0].verse_key;
+          const lastKey  = pageVerses[pageVerses.length - 1].verse_key;
+          if (allKnownKeys && allKnownKeys.has(firstKey) && allKnownKeys.has(lastKey)) {
+            pg.ln = '*';
+          } else {
+            const lineTotals = new Map();
+            const lineOwn    = new Map();
+            for (const pv of pageVerses) {
+              const owned = allKnownKeys && allKnownKeys.has(pv.verse_key);
+              for (const w of (pv.words || [])) {
+                const lnum = w.line_number;
+                if (lnum == null) continue;
+                lineTotals.set(lnum, (lineTotals.get(lnum) || 0) + 1);
+                if (owned) lineOwn.set(lnum, (lineOwn.get(lnum) || 0) + 1);
+              }
+            }
+            let ownedLines = 0;
+            for (const [lnum, total] of lineTotals) {
+              if ((lineOwn.get(lnum) || 0) / total >= 0.75) ownedLines++;
+            }
+            pg.ln = ownedLines > 0 ? String(ownedLines) : '*';
+          }
+        }
+      }
+    }
+
+    // After any add, check if any surah is now fully covered across all knownAyat
+    // entries and collapse them into a single bare-number label (e.g. "19").
+    // Runs even if bare label already exists — cleans up zombie partials.
+    // After any add, normalize knownAyat entries per surah:
+    // - Merge contiguous/adjacent single-surah ranges (19:1-33 + 19:34-97 → 19:1-97)
+    // - Collapse to bare number when full surah is covered (19:1-98 → 19)
+    // Cross-surah entries (e.g. 2:284-3:20) are left alone.
+    async function normalizeKnownAyat() {
+      const meta = await getSurahMeta();
+      if (!meta) return;
+
+      for (let surah = 1; surah <= 114; surah++) {
+        const total = meta[surah];
+
+        const isSingleSurahLabel = (label) => {
+          const vs = parseVerseRangeSync(label, meta);
+          if (!vs || !vs.length) return false;
+          return vs.every(v => v.surah === surah);
+        };
+
+        const qContrib = D.knownAyat.qiraat.filter(isSingleSurahLabel);
+        const mContrib = D.knownAyat.memory.filter(isSingleSurahLabel);
+        const allContrib = [...qContrib, ...mContrib];
+
+        // Nothing to normalize if 0 or 1 label
+        if (allContrib.length <= 1) continue;
+
+        // Expand all verses for this surah across all contributing labels
+        const ayahSet = new Set();
+        for (const l of allContrib) {
+          const vs = parseVerseRangeSync(l, meta);
+          if (vs) vs.forEach(({ surah: s, ayah: a }) => { if (s === surah) ayahSet.add(a); });
+        }
+
+        // Re-condense into minimal label(s)
+        const sortedVs = [...ayahSet].sort((a, b) => a - b).map(a => ({ surah, ayah: a }));
+        const newLabel = condenseVerseList(sortedVs, meta); // uses meta → collapses full surah to bare number
+        if (!newLabel) continue;
+
+        // No change needed if result is already what we have as a single entry
+        if (allContrib.length === 1 && allContrib[0] === newLabel) continue;
+
+        // Determine target list: qiraat wins if any contributor is qiraat
+        const targetType = qContrib.length > 0 ? 'qiraat' : 'memory';
+        const oldLabelSet = new Set(allContrib);
+
+        // Update sourceLabels on affected pages
+        for (const pg of D.pages) {
+          if (!pg.sourceLabels) continue;
+          const hadOld = pg.sourceLabels.some(l => oldLabelSet.has(l));
+          if (!hadOld) continue;
+          pg.sourceLabels = pg.sourceLabels.filter(l => !oldLabelSet.has(l));
+          if (!pg.sourceLabels.includes(newLabel)) pg.sourceLabels.push(newLabel);
+        }
+
+        // Remove old labels, add merged label
+        D.knownAyat.qiraat = D.knownAyat.qiraat.filter(l => !qContrib.includes(l));
+        D.knownAyat.memory  = D.knownAyat.memory.filter(l => !mContrib.includes(l));
+        D.knownAyat[targetType].push(newLabel);
+      }
+    }
+
     async function submitAddAyah() {
       const raw = document.getElementById('aam-input').value.trim();
       if (!raw) return;
@@ -2934,6 +3419,21 @@
 
       const { verses, label, surahLabels } = result;
 
+      // Check for overlap with already-known verses BEFORE adding anything.
+      // buildAllKnownVerseKeys reads D.knownAyat as-is (nothing added yet).
+      const currentKnown = await buildAllKnownVerseKeys();
+      if (currentKnown) {
+        const overlapping = verses.filter(v => currentKnown.has(`${v.surah}:${v.ayah}`));
+        if (overlapping.length > 0) {
+          // Build a compact label of just the overlapping verses for the message
+          const meta = await getSurahMeta();
+          const overlapLabel = condenseVerseList(overlapping, meta);
+          errEl.textContent = `Already known: ${overlapLabel}`;
+          loadEl.textContent = '';
+          return;
+        }
+      }
+
       // For surah ranges (e.g. 108-114): push one knownAyat entry per surah.
       // For everything else: push a single entry with the raw label.
       const labels = surahLabels || [label];
@@ -2949,36 +3449,57 @@
       // surah-level label it belongs to.
       loadEl.textContent = 'Fetching page data…';
 
+      // Compute all known verse keys NOW (after D.knownAyat was updated above)
+      // so buildPageCards can count lines from ALL memorised surahs on shared pages.
+      const allKnownKeys = await buildAllKnownVerseKeys();
+
       if (surahLabels) {
-        // Process each surah individually so sourceLabel matches the per-surah entry
+        // Process each surah individually so each sourceLabel maps to its own surah
         for (const sl of surahLabels) {
           const s = parseInt(sl);
           const meta = await getSurahMeta();
           const surahVerses = [];
           for (let a = 1; a <= meta[s]; a++) surahVerses.push({ surah: s, ayah: a });
-          const cards = await buildPageCards(surahVerses, sl, loadEl, true);
+          const cards = await buildPageCards(surahVerses, sl, loadEl, allKnownKeys);
           for (const { page, verseLabel, ln } of cards) {
-            if (D.pages.findIndex(p => p.page === page) === -1) {
-              D.pages.push({ page, verses: verseLabel, ln, done: false, next: false, sourceLabel: sl });
+            const existingIdx = D.pages.findIndex(p => p.page === page);
+            if (existingIdx === -1) {
+              D.pages.push({ page, verses: verseLabel, ln, done: false, next: false, sourceLabels: [sl] });
               D.recentQueue = D.recentQueue.filter(n => n !== page);
               D.recentQueue.push(page);
               if (D.recentQueue.length > 10) D.recentQueue.shift();
+            } else {
+              const pg = D.pages[existingIdx];
+              if (!pg.sourceLabels) pg.sourceLabels = pg.sourceLabel ? [pg.sourceLabel] : [];
+              delete pg.sourceLabel;
+              if (!pg.sourceLabels.includes(sl)) pg.sourceLabels.push(sl);
+              pg.verses = verseLabel;
+              pg.ln = ln;
             }
           }
         }
       } else {
-        const cards = await buildPageCards(verses, label, loadEl);
+        const cards = await buildPageCards(verses, label, loadEl, allKnownKeys);
         for (const { page, verseLabel, ln } of cards) {
-          if (D.pages.findIndex(p => p.page === page) === -1) {
-            D.pages.push({ page, verses: verseLabel, ln, done: false, next: false, sourceLabel: label });
+          const existingIdx = D.pages.findIndex(p => p.page === page);
+          if (existingIdx === -1) {
+            D.pages.push({ page, verses: verseLabel, ln, done: false, next: false, sourceLabels: [label] });
             D.recentQueue = D.recentQueue.filter(n => n !== page);
             D.recentQueue.push(page);
             if (D.recentQueue.length > 10) D.recentQueue.shift();
+          } else {
+            const pg = D.pages[existingIdx];
+            if (!pg.sourceLabels) pg.sourceLabels = pg.sourceLabel ? [pg.sourceLabel] : [];
+            delete pg.sourceLabel;
+            if (!pg.sourceLabels.includes(label)) pg.sourceLabels.push(label);
+            pg.verses = verseLabel;
+            pg.ln = ln;
           }
         }
       }
       D.pages.sort((a, b) => a.page - b.page);
 
+      await normalizeKnownAyat();
       persist(); renderAll(); initDeck();
       loadEl.textContent = '';
       closeAddAyahModal();
@@ -3024,9 +3545,9 @@
       if (!confirm('Delete this entry?')) return;
       const label = D.knownAyat[_aemOrigType][_aemIdx];
       D.knownAyat[_aemOrigType].splice(_aemIdx, 1);
-      D.pages = D.pages.filter(p => p.sourceLabel !== label);
-      D.recentQueue = D.recentQueue.filter(n => D.pages.some(p => p.page === n));
-      persist(); renderAll(); initDeck();
+      updatePagesForDeletedLabel(label).then(() => {
+        persist(); renderAll(); initDeck();
+      });
       closeAyahEditModal();
     }
 
@@ -3149,9 +3670,9 @@
     function delAyah(type, idx) {
       const label = D.knownAyat[type][idx];
       D.knownAyat[type].splice(idx, 1);
-      D.pages = D.pages.filter(p => p.sourceLabel !== label);
-      D.recentQueue = D.recentQueue.filter(n => D.pages.some(p => p.page === n));
-      persist(); renderPlan(); initDeck();
+      updatePagesForDeletedLabel(label).then(() => {
+        persist(); renderPlan(); initDeck();
+      });
     }
 
 
@@ -3302,99 +3823,122 @@
       return known;
     }
     // ── LEITNER BOX SYSTEM ───────────────────────────────────────────
-    // Persistence key separate from main data so it survives reloads
-    const LB_KEY = 'hifz_leitner_v1';
     // Frequency: box N drilled every Nth sessions
     const LB_FREQ = [0, 1, 2, 4, 8, 16]; // index = box number (1-5)
 
-    let lbMode = 'all'; // 'all' | 'known'
+    let activeType = 'openings'; // 'openings' | 'verse-refs'
+    let lbMode = 'all';          // 'all' | 'known' — applies to openings
 
-    // Per-card state: { box: 1-5 }
-    // Persisted as { [surahN]: box }
-    let lbCards = {}; // loaded from LS
-    let lbSessionNum = 1; // which session number (persisted)
-
+    // Per-type persistent state
+    const allLbState = {
+      'openings':   { cards: {}, sessionNum: 1 },
+      'verse-refs': { cards: {}, sessionNum: 1 }
+    };
     // Session-level state (not persisted)
-    let lbQueue = [];      // cards to drill this session, in order
-    let lbQueueIdx = 0;    // current position in queue
+    let lbQueue = [];
+    let lbQueueIdx = 0;
     let lbPassCount = 0;
     let lbFailCount = 0;
     let lbSessionActive = false;
-    let lbFlipped = false;  // track flip state manually (not via CSS class directly)
-    let lbTransitioning = false; // guard against double-clicks during animation
+    let lbFlipped = false;
+    let lbTransitioning = false;
+
+    // Arabic + transliteration cache for verse-refs
+    const _ayahDataCache = {};
+    async function fetchAyahData(surah, ayah) {
+      const k = `${surah}:${ayah}`;
+      if (_ayahDataCache[k]) return _ayahDataCache[k];
+      try {
+        const r = await fetch(`https://api.quran.com/api/v4/verses/by_key/${surah}:${ayah}?words=true&fields=text_uthmani`);
+        const d = await r.json();
+        const v = d.verse || {};
+        const arabic = v.text_uthmani || '';
+        const translit = (v.words || [])
+          .filter(w => w.char_type_name !== 'end')
+          .map(w => w.transliteration?.text || '')
+          .filter(Boolean)
+          .join(' ');
+        _ayahDataCache[k] = { arabic, translit };
+      } catch(e) { _ayahDataCache[k] = { arabic: '', translit: '' }; }
+      return _ayahDataCache[k];
+    }
 
     function lbLoad() {
-      // Load from localStorage cache (npoint pull happens async after init)
-      const s = localStorage.getItem(LB_KEY);
-      if (s) {
-        try {
-          const p = JSON.parse(s);
-          lbCards = p.cards || {};
-          lbSessionNum = p.sessionNum || 1;
-        } catch(e) {}
-      }
+      // leitner state is loaded via applyLeitnerFromD() which runs inside loadLS/npPull
     }
 
-    async function lbSave() {
-      const payload = { cards: lbCards, sessionNum: lbSessionNum };
-      // Always write to localStorage as fast cache
-      localStorage.setItem(LB_KEY, JSON.stringify(payload));
-      // Push to npoint if bin is configured
-      if (!npBin) return;
-      try {
-        // Merge into the main D object under a leitner key, then push
-        D.leitner = payload;
-        await npPush();
-      } catch(e) { console.warn('lbSave npoint error', e); }
+    function lbSave() {
+      // leitner is bundled into D on every persist() call — no separate save needed
+      persist();
     }
 
-    async function lbPullFromNpoint() {
-      if (!npBin) return;
-      try {
-        const r = await fetch(NP_BASE + npBin);
-        if (!r.ok) return;
-        const remote = await r.json();
-        if (remote && remote.leitner) {
-          lbCards = remote.leitner.cards || {};
-          lbSessionNum = remote.leitner.sessionNum || 1;
-          localStorage.setItem(LB_KEY, JSON.stringify(remote.leitner));
-          lbRenderBoxes();
-          lbUpdateBanner();
-        }
-      } catch(e) { console.warn('lbPull error', e); }
+    function lbGetBox(key) {
+      return allLbState[activeType].cards[key] || 1;
     }
-
-    function lbGetBox(surahN) {
-      return lbCards[surahN] || 1;
-    }
-
-    function lbSetBox(surahN, box) {
-      lbCards[surahN] = Math.max(1, Math.min(5, box));
+    function lbSetBox(key, box) {
+      allLbState[activeType].cards[key] = Math.max(1, Math.min(5, box));
       lbSave();
     }
 
+    // ── Deck builders ──────────────────────────────────────────────
+    function lbGetDeckVerseRefs() {
+      if (!_surahMeta) return [];
+      const all = [...D.knownAyat.qiraat, ...D.knownAyat.memory];
+      const keys = new Set();
+      for (const label of all) {
+        const vs = parseVerseRangeSync(label, _surahMeta);
+        if (vs) vs
+          .filter(({ ayah }) => ayah === 1 || ayah % 5 === 0)
+          .forEach(({ surah, ayah }) => keys.add(`${surah}:${ayah}`));
+      }
+      return [...keys].sort((a, b) => {
+        const [sa, aa] = a.split(':').map(Number);
+        const [sb, ab] = b.split(':').map(Number);
+        return sa !== sb ? sa - sb : aa - ab;
+      }).map(k => {
+        const [surah, ayah] = k.split(':').map(Number);
+        const info = FAWATIH.find(f => f.n === surah);
+        return { key: k, surah, ayah, name: info ? info.name : `Surah ${surah}` };
+      });
+    }
+
     function lbGetDeck() {
-      const all = lbMode === 'known'
+      if (activeType === 'verse-refs') return lbGetDeckVerseRefs();
+      // openings
+      return (lbMode === 'known'
         ? FAWATIH.filter(f => getKnownSurahSet().has(f.n))
-        : [...FAWATIH];
-      return all;
+        : [...FAWATIH]
+      ).map(f => ({ ...f, key: f.n }));
     }
 
     function lbSetMode(mode) {
       lbMode = mode;
-      document.getElementById('fbtn-all').className   = 'btn' + (lbMode === 'all'   ? ' primary' : '');
-      document.getElementById('fbtn-known').className = 'btn' + (lbMode === 'known' ? ' primary' : '');
+      document.getElementById('fbtn-all').classList.toggle('primary',   mode === 'all');
+      document.getElementById('fbtn-known').classList.toggle('primary', mode === 'known');
       lbStartSession();
     }
 
-    // Build this session's queue: box 1 always, box N if sessionNum % freq === 0
-    function lbBuildQueue() {
+    async function lbSetType(type) {
+      activeType = type;
+      ['openings','verse-refs'].forEach(t => {
+        document.getElementById('fbtn-type-' + t).classList.toggle('primary', t === type);
+      });
+      const showMode = type === 'openings';
+      document.getElementById('fbtn-all').style.display      = showMode ? '' : 'none';
+      document.getElementById('fbtn-known').style.display    = showMode ? '' : 'none';
+      document.getElementById('fbtn-mode-sep').style.display = showMode ? '' : 'none';
+      if (type === 'verse-refs') await getSurahMeta();
+      await lbStartSession();
+    }
+
+    async function lbBuildQueue() {
       const deck = lbGetDeck();
+      const sn   = allLbState[activeType].sessionNum;
       const queue = [];
       for (const card of deck) {
-        const box = lbGetBox(card.n);
+        const box  = lbGetBox(card.key);
         const freq = LB_FREQ[box];
-        if (lbSessionNum % freq === 0) {
+        if (sn % freq === 0) {
           queue.push(card);
         }
       }
@@ -3403,31 +3947,33 @@
         const j = Math.floor(Math.random() * (i + 1));
         [queue[i], queue[j]] = [queue[j], queue[i]];
       }
+      // Pre-fetch arabic+transliteration for all verse-ref cards in this session's queue
+      if (activeType === 'verse-refs' && queue.length > 0) {
+        await Promise.all(queue.map(c => fetchAyahData(c.surah, c.ayah)));
+      }
       return queue;
     }
 
-    function lbStartSession() {
-      lbQueue = lbBuildQueue();
+    async function lbStartSession() {
+      lbQueue = await lbBuildQueue();
       if (lbQueue.length === 0) {
-        lbSessionNum++;
+        allLbState[activeType].sessionNum++;
         lbSave();
-        lbQueue = lbBuildQueue();
+        lbQueue = await lbBuildQueue();
         if (lbQueue.length === 0) {
           lbShowComplete('mastered');
           return;
         }
       }
-      lbQueueIdx = 0;
-      lbPassCount = 0;
-      lbFailCount = 0;
-      lbSessionActive = true;
-      lbTransitioning = false;
+      lbQueueIdx    = 0;
+      lbPassCount   = 0;
+      lbFailCount   = 0;
+      lbSessionActive  = true;
+      lbTransitioning  = false;
 
-      // Hard-reset card flip state — remove ALL transition classes first,
-      // then force a reflow so the browser doesn't animate from flipped to unflipped
       const fc = document.getElementById('flashcard');
       fc.classList.remove('animating', 'is-flipped', 'pulse-pass', 'shake-fail');
-      void fc.offsetWidth; // force reflow — flushes pending CSS transitions
+      void fc.offsetWidth;
       lbFlipped = false;
 
       document.getElementById('lb-btn-pass').disabled = true;
@@ -3438,48 +3984,31 @@
       document.getElementById('fp-card-deck').classList.remove('hidden');
       document.getElementById('fp-nav').classList.remove('hidden');
 
-      lbRenderCard(false);
+      lbRenderCard();
       lbRenderBoxes();
       lbUpdateBanner();
       lbUpdateBar();
     }
 
-    // Flip: update content BEFORE flipping (front is always next card, back is revealed answer)
-    // This eliminates the "flash of next card back" bug:
-    // We NEVER show the back until the user explicitly flips.
     function lbFlip() {
       if (lbTransitioning) return;
-      if (lbFlipped) return; // already flipped, don't flip back (pass/fail do that)
-
+      if (lbFlipped) return;
       const fc = document.getElementById('flashcard');
       lbFlipped = true;
       lbTransitioning = true;
-      fc.classList.add('animating');
-      fc.classList.add('is-flipped');
-
-      // Enable pass/fail
+      fc.classList.add('animating', 'is-flipped');
       document.getElementById('lb-btn-pass').disabled = false;
       document.getElementById('lb-btn-fail').disabled = false;
       document.getElementById('lb-btn-flip').disabled = true;
-
-      setTimeout(() => {
-        lbTransitioning = false;
-        fc.classList.remove('animating');
-      }, 430);
+      setTimeout(() => { lbTransitioning = false; fc.classList.remove('animating'); }, 430);
     }
 
     function lbMarkPass() {
       if (lbTransitioning || !lbFlipped) return;
       const card = lbQueue[lbQueueIdx];
       lbPassCount++;
-
-      const oldBox = lbGetBox(card.n);
-      lbSetBox(card.n, oldBox + 1);
-
-      // Visual feedback — pulse green, then advance
-      const fc = document.getElementById('flashcard');
-      fc.classList.add('pulse-pass');
-
+      lbSetBox(card.key, lbGetBox(card.key) + 1);
+      document.getElementById('flashcard').classList.add('pulse-pass');
       _lbAdvance();
     }
 
@@ -3487,96 +4016,103 @@
       if (lbTransitioning || !lbFlipped) return;
       const card = lbQueue[lbQueueIdx];
       lbFailCount++;
-
-      lbSetBox(card.n, 1); // back to box 1
-
-      const fc = document.getElementById('flashcard');
+      lbSetBox(card.key, 1);
+      const fc   = document.getElementById('flashcard');
       const back = document.getElementById('fc-back');
       fc.classList.remove('shake-fail');
       void fc.offsetWidth;
       fc.classList.add('shake-fail');
       back.classList.add('fail-glow');
       setTimeout(() => back.classList.remove('fail-glow'), 500);
-
       _lbAdvance();
     }
 
     function _lbAdvance() {
       if (lbTransitioning) return;
       lbTransitioning = true;
-
       const fc = document.getElementById('flashcard');
-
-      // Step 1: flip back to front (showing BLANK / next card number, not yet loaded)
       setTimeout(() => {
         fc.classList.add('animating');
         fc.classList.remove('is-flipped');
         lbFlipped = false;
-        // Disable pass/fail, re-enable flip
         document.getElementById('lb-btn-pass').disabled = true;
         document.getElementById('lb-btn-fail').disabled = true;
         document.getElementById('lb-btn-flip').disabled = false;
-
-        // Step 2: after flip animation completes, load NEXT card content
         setTimeout(() => {
           fc.classList.remove('animating', 'pulse-pass', 'shake-fail');
           lbQueueIdx++;
-
           if (lbQueueIdx >= lbQueue.length) {
             lbTransitioning = false;
             lbEndSession();
           } else {
-            lbRenderCard(false);
+            lbRenderCard();
             lbRenderBoxes();
             lbUpdateBanner();
             lbUpdateBar();
             lbTransitioning = false;
           }
-        }, 440); // wait for flip animation
-      }, 60); // tiny delay so pulse/shake is visible
+        }, 440);
+      }, 60);
     }
 
-    function lbRenderCard(revealed) {
+    // Renders both card faces for the current activeType.
+    // Arabic is pre-fetched into _arabicCache so this is synchronous.
+    function lbRenderCard() {
       const card = lbQueue[lbQueueIdx];
       if (!card) return;
 
-      const s = String(card.n);
-      document.getElementById('fc-num').innerHTML =
-        s.slice(0,-1) + '<span class="accent">' + s.slice(-1) + '</span>';
-
-      const box = lbGetBox(card.n);
+      const box = lbGetBox(card.key);
       document.getElementById('fc-box-badge').textContent = 'BOX ' + box;
 
-      document.getElementById('fc-name').textContent    = card.name;
-      document.getElementById('fc-arabic').textContent  = card.arabic;
-      document.getElementById('fc-opening').textContent = card.opening;
+      // Helper shortcuts
+      const show  = (id, txt)  => { const el = document.getElementById(id); el.style.display = 'block'; if (txt !== undefined) el.textContent = txt; };
+      const hide  = (id)       => { document.getElementById(id).style.display = 'none'; };
+      const setH  = (id, html) => { const el = document.getElementById(id); el.style.display = 'block'; el.innerHTML = html; };
+
+      // Accent helper: highlight the part after ':' (ayah) or last digit (surah num)
+      const accentRef = (ref) => {
+        const ci = ref.indexOf(':');
+        if (ci !== -1) return ref.slice(0, ci + 1) + '<span class="accent">' + ref.slice(ci + 1) + '</span>';
+        return ref.slice(0, -1) + '<span class="accent">' + ref.slice(-1) + '</span>';
+      };
+
+      if (activeType === 'openings') {
+        setH('fc-num', accentRef(String(card.n)));
+        hide('fc-front-context'); hide('fc-front-label'); hide('fc-front-arabic');
+        show('fc-name',    card.name);
+        show('fc-arabic',  card.arabic);
+        show('fc-opening', card.opening);
+        hide('fc-back-count'); hide('fc-back-ref'); hide('fc-back-translit');
+
+      } else { // 'verse-refs' — front: ref + surah context, back: arabic + transliteration
+        const data = _ayahDataCache[card.key] || { arabic: '…', translit: '' };
+        setH('fc-num', accentRef(card.key));
+        show('fc-front-context', card.name + ', ' + card.ayah);
+        hide('fc-front-label'); hide('fc-front-arabic');
+        show('fc-arabic',        data.arabic);
+        show('fc-back-translit', data.translit);
+        hide('fc-opening'); hide('fc-name'); hide('fc-back-count'); hide('fc-back-ref');
+      }
     }
 
     function lbRenderBoxes() {
-      const deck = lbGetDeck();
-      const counts = {1:0, 2:0, 3:0, 4:0, 5:0};
+      const deck   = lbGetDeck();
+      const sn     = allLbState[activeType].sessionNum;
+      const counts = {1:0,2:0,3:0,4:0,5:0};
       for (const card of deck) {
-        const box = lbGetBox(card.n);
+        const box = lbGetBox(card.key);
         counts[box] = (counts[box] || 0) + 1;
       }
       const total = deck.length || 1;
-
       for (let b = 1; b <= 5; b++) {
-        document.getElementById('lb-count-' + b).textContent = counts[b] || 0;
-        const pct = ((counts[b] || 0) / total * 100).toFixed(1);
-        document.getElementById('lb-fill-' + b).style.width = pct + '%';
-
-        const boxEl = document.getElementById('lb-box-' + b);
-        // Highlight which boxes are due this session
-        const freq = LB_FREQ[b];
-        const due = freq && (lbSessionNum % freq === 0);
-        boxEl.classList.toggle('lb-active', due);
+        document.getElementById('lb-count-' + b).textContent  = counts[b] || 0;
+        document.getElementById('lb-fill-'  + b).style.width  = ((counts[b] || 0) / total * 100).toFixed(1) + '%';
+        const due = LB_FREQ[b] && (sn % LB_FREQ[b] === 0);
+        document.getElementById('lb-box-' + b).classList.toggle('lb-active', due);
       }
     }
 
-    function lbUpdateBanner() {
-      // Session banner removed — nothing to update
-    }
+    function lbUpdateBanner() {}
 
     function lbUpdateBar() {
       const pct = lbQueue.length > 0 ? (lbQueueIdx / lbQueue.length * 100) : 0;
@@ -3584,22 +4120,17 @@
     }
 
     function lbEndSession() {
-      lbSessionNum++;
+      allLbState[activeType].sessionNum++;
       lbSave();
       lbSessionActive = false;
-
-      // Count mastered
-      const deck = lbGetDeck();
-      const mastered = deck.filter(c => lbGetBox(c.n) === 5).length;
-
+      const deck     = lbGetDeck();
+      const mastered = deck.filter(c => lbGetBox(c.key) === 5).length;
       lbShowComplete('session');
       lbRenderBoxes();
-
-      // Set bar to 100
       document.getElementById('fp-bar').style.width = '100%';
     }
 
-    function lbShowComplete(type) {
+    function lbShowComplete(completeType) {
       document.getElementById('fp-card-deck').classList.add('hidden');
       document.getElementById('fp-nav').classList.add('hidden');
       document.getElementById('fp-complete').classList.add('visible');
@@ -3608,30 +4139,31 @@
       const title = document.getElementById('fp-complete-title');
       const sub   = document.getElementById('fp-complete-sub');
       const acts  = document.getElementById('fp-complete-actions');
+      const deck     = lbGetDeck();
+      const mastered = deck.filter(c => lbGetBox(c.key) === 5).length;
+      const sn       = allLbState[activeType].sessionNum;
 
-      const deck = lbGetDeck();
-      const mastered = deck.filter(c => lbGetBox(c.n) === 5).length;
-
-      if (type === 'mastered') {
+      if (completeType === 'mastered') {
         icon.textContent  = '✦';
         title.textContent = 'All mastered';
         sub.innerHTML     = `No cards due this session. Try again later, or reset boxes.`;
         acts.innerHTML    = `<button class="fc-btn" onclick="lbResetBoxes()">Reset boxes</button>`;
       } else {
         icon.textContent  = '✦';
-        title.textContent = 'Session ' + (lbSessionNum - 1) + ' complete';
+        title.textContent = 'Session ' + (sn - 1) + ' complete';
         sub.innerHTML     = `<b>${lbPassCount}</b> passed · <b>${lbFailCount}</b> failed<br>
           <b>${mastered}</b> / <b>${deck.length}</b> mastered (box 5)<br>
-          Next session: <b>${lbSessionNum}</b>`;
+          Next session: <b>${sn}</b>`;
         acts.innerHTML    = `<button class="fc-btn pass" onclick="lbStartSession()">▶ Next session</button>
           <button class="fc-btn" onclick="lbResetBoxes()">Reset boxes</button>`;
       }
     }
 
     function lbResetBoxes() {
-      if (!confirm('Reset all Leitner box data? Cards go back to box 1.')) return;
-      lbCards = {};
-      lbSessionNum = 1;
+      const label = { openings: 'Openings', 'verse-refs': 'Verse Refs' }[activeType] || activeType;
+      if (!confirm(`Reset ${label} box data? Cards go back to box 1.`)) return;
+      allLbState[activeType].cards      = {};
+      allLbState[activeType].sessionNum = 1;
       lbSave();
       lbSessionActive = false;
       document.getElementById('fp-complete').classList.remove('visible');
@@ -3740,7 +4272,8 @@
     renderAll();
     initDeck();
     updateStatus();
-    if (npBin) { npPull().then(() => lbPullFromNpoint()); }
+    if (npBin && npBin !== 'YOUR_BIN_ID_HERE') { npPull(); }
+    checkNpSetup();
   </script>
 </body>
 
