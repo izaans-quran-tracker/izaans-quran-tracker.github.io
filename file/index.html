@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hifdh Tracker — File</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Noto+Naskh+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/styles.css" />
+</head>
+<body>
+
+  <div id="bg">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+    <div class="orb o4"></div>
+    <div class="orb o5"></div>
+    <div class="orb o6"></div>
+    <div class="orb o7"></div>
+    <div class="orb o8"></div>
+  </div>
+  <div class="grain"></div>
+
+  <!-- NPOINT SETUP MODAL -->
+  <div class="np-setup-backdrop" id="np-setup-modal">
+    <div class="np-setup-modal">
+      <div class="np-setup-title">Connect Cloud Sync</div>
+      <div class="np-setup-sub">Your data needs a free cloud bin to sync across devices. Takes 30 seconds.</div>
+      <div class="np-setup-steps">
+        <div class="np-setup-step">
+          <span class="np-step-num">1</span>
+          <span class="np-step-text">Go to <a href="https://www.npoint.io" target="_blank">npoint.io</a> and click <b>New JSON Bin</b></span>
+        </div>
+        <div class="np-setup-step">
+          <span class="np-step-num">2</span>
+          <span class="np-step-text">Paste <b>{}</b> into the editor and click <b>Save</b></span>
+        </div>
+        <div class="np-setup-step">
+          <span class="np-step-num">3</span>
+          <span class="np-step-text">Copy the <b>bin ID</b> from the URL — it looks like <b>abc123def456</b> (the part after npoint.io/)</span>
+        </div>
+        <div class="np-setup-step">
+          <span class="np-step-num">4</span>
+          <span class="np-step-text">Paste it below and click <b>Connect</b></span>
+        </div>
+      </div>
+      <div class="np-setup-input-row">
+        <input class="ginput" id="np-setup-input" placeholder="Paste bin ID here…"
+          style="flex:1;font-family:var(--mono);font-size:13px"
+          onkeydown="if(event.key==='Enter')npSetupConnect()" />
+        <button class="btn primary" onclick="npSetupConnect()">Connect</button>
+      </div>
+      <div class="np-setup-note" id="np-setup-note"></div>
+      <div style="margin-top:16px;text-align:right">
+        <button class="modal-cancel" onclick="npSetupSkip()">Skip for now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AYAH EDIT MODAL -->
+  <div class="ayah-edit-modal-backdrop" id="ayah-edit-modal">
+    <div class="ayah-edit-modal">
+      <div class="aem-title">Edit Entry</div>
+      <div class="aem-ref-display" id="aem-ref">—</div>
+      <div class="modal-label" style="margin-bottom:6px">Type</div>
+      <div class="aem-type-row">
+        <div class="aem-type-btn active-qiraat" id="aem-btn-qiraat" onclick="aemSetType('qiraat')">● Qiraat</div>
+        <div class="aem-type-btn" id="aem-btn-memory" onclick="aemSetType('memory')">○ Memory</div>
+      </div>
+      <div class="modal-label" style="margin-bottom:6px">Label / Reference</div>
+      <input class="aem-text-field" id="aem-text" type="text" placeholder="e.g. 19:1-33" />
+      <div class="aem-actions">
+        <button class="modal-cancel" onclick="closeAyahEditModal()">Cancel</button>
+        <button class="modal-delete" onclick="aemDelete()">Delete</button>
+        <button class="modal-save" style="flex:1" onclick="aemSave()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD AYAH MODAL -->
+  <div class="add-ayah-modal-backdrop" id="add-ayah-modal">
+    <div class="add-ayah-modal">
+      <div class="aam-title">Add Verse(s)</div>
+      <div class="aam-hint">Format examples: <span style="color:var(--text-dim)">2:1-6</span> · <span style="color:var(--text-dim)">2:255</span> · <span style="color:var(--text-dim)">1</span> · <span style="color:var(--text-dim)">108-114</span> · <span style="color:var(--text-dim)">19:1-33</span> · <span style="color:var(--text-dim)">2:284-3:20</span></div>
+      <input class="aam-input" id="aam-input" type="text" placeholder="e.g. 19:1-33 or 108-114"
+        onkeydown="if(event.key==='Enter')submitAddAyah()" />
+      <div class="aam-error" id="aam-error"></div>
+      <div class="aam-loading" id="aam-loading"></div>
+      <div class="aam-actions">
+        <button class="modal-cancel" onclick="closeAddAyahModal()">Cancel</button>
+        <button class="modal-save" style="flex:1" onclick="submitAddAyah()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <div class="modal-title" id="modal-title">Add Page</div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <div class="modal-label">Page #</div>
+          <input class="modal-input" id="m-page" type="number" placeholder="e.g. 306" />
+        </div>
+        <div class="modal-field">
+          <div class="modal-label">Lines (* = Full/15)</div>
+          <input class="modal-input" id="m-ln" type="text" placeholder="* or 9" />
+        </div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">Name / Verses</div>
+        <input class="modal-input" id="m-verses" type="text" placeholder="e.g. 19:34–50 or Al-Kahf (18)" />
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <div class="modal-label">In prayer?</div>
+          <select class="modal-input" id="m-done">
+            <option value="false">No</option>
+            <option value="true">Yes (@)</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <div class="modal-label">Next up?</div>
+          <select class="modal-input" id="m-next">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-note" id="m-note"></div>
+      <div class="modal-actions">
+        <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-delete" id="m-del" style="display:none" onclick="deleteFromModal()">Delete</button>
+        <button class="modal-save" onclick="saveModal()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- TOPBAR -->
+    <div id="topbar">
+      <div class="logo">
+        <div class="logo-title">ح<span class="logo-accent">ف</span>ظ</div>
+        <div class="logo-sub">Hifz Tracker</div>
+      </div>
+      <div class="topbar-right">
+        <span class="file-status" id="file-status"><span class="dot-unsaved"></span>no file</span>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div id="tabs">
+      <div class="tab active" onclick="switchTab('plan')">Plan</div>
+      <div class="tab" onclick="switchTab('review')">Review</div>
+      <div class="tab" onclick="switchTab('fawatih')">Card Drills</div>
+      <div class="tab" onclick="switchTab('file')">File</div>
+    </div>
+
+    <div id="content">
+
+      <!-- PLAN -->
+      <div class="section active" id="sec-plan">
+        <div class="plan-grid">
+          <div class="plan-box">
+            <div class="plan-box-title">Known Ayat</div>
+            <div class="add-ayah-row">
+              <input class="ginput" id="ayah-search-in" placeholder="Search known ayat…"
+                style="flex:1;font-size:12px;padding:7px 12px" oninput="filterAyahList()" />
+              <button class="btn primary" onclick="openAddAyahModal()" title="Add verses">+</button>
+            </div>
+            <div class="plan-steps" id="known-ayat-list"></div>
+          </div>
+          <div class="plan-box">
+            <div class="plan-box-title">Memorization Roadmap</div>
+            <div class="add-ayah-row">
+              <input class="ginput" id="add-step-in" placeholder="Add roadmap step…"
+                style="flex:1;font-size:12px;padding:7px 12px" onkeydown="if(event.key==='Enter')addStep()" />
+              <button class="btn primary" onclick="addStep()">+</button>
+            </div>
+            <div class="plan-steps" id="plan-steps-list"></div>
+          </div>
+          <div class="plan-box">
+            <div class="plan-box-title">How to Memorize</div>
+            <div class="memorize-steps">
+              <div class="mem-phase">
+                <div class="mem-phase-title">Phase 1 — Mishary 1 (clear, tajweed-focused)</div>
+                <div class="mem-step" style="margin-bottom:6px"><b>Passive:</b> Listen to the next group (2–10 ayahs) on loop, <b>changing start/end ayah</b> to avoid anchoring wrong memory. Goal: internalize correct pronunciation and tajweed.</div>
+                <div class="mem-step"><b>Active:</b></div>
+                <div class="mem-step"><b>1.</b> Listen to next 2 ayahs 10× while looking at verse number (split long ayahs at stopping points)</div>
+                <div class="mem-step"><b>2a.</b> Read verse 5–25× until smooth</div>
+                <div class="mem-step"><b>2b.</b> Recite along 5–25×</div>
+                <div class="mem-step"><b>2c.</b> Recite on Tarteel and note mistakes/hesitations</div>
+                <div class="mem-step"><b>3.</b> Repeat for pair: 1+2, then 2+3, then 3+4…</div>
+              </div>
+              <div class="mem-phase">
+                <div class="mem-phase-title">Phase 2 — Mishary 2 (style-focused, once Phase 1 group is memorized)</div>
+                <div class="mem-step"><b>Passive:</b> Listen to the same group (2–10 ayahs) on loop with Mishary 2, <b>changing start/end ayah</b> to avoid anchoring wrong memory. Goal: re-memorize with good recitation style.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEW -->
+      <div class="section" id="sec-review">
+        <div class="sec-label" style="margin-bottom:10px">Last 10 pages memorized</div>
+        <div id="recent-grid" style="margin-bottom:20px"></div>
+
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+          <div class="sec-label" style="margin-bottom:0">All pages memorized</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input class="ginput" id="rev-search" style="width:150px;padding:7px 12px;font-size:12px" type="text"
+              placeholder="Search…" oninput="renderReview()" />
+            <div class="gselect-wrap" id="rev-filter-wrap">
+              <div class="gselect-btn" id="rev-filter-btn" onclick="toggleSel('rev-filter-wrap')"
+                style="min-width:110px;padding:7px 12px;font-size:12px">
+                <span id="rev-filter-lbl">All</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+              <div class="gselect-dropdown" id="rev-filter-dd">
+                <div class="gselect-opt selected" onclick="setRevFilter('all','All')">All</div>
+                <div class="gselect-opt" onclick="setRevFilter('done','In prayer')">In prayer</div>
+                <div class="gselect-opt" onclick="setRevFilter('notdone','Not in prayer')">Not in prayer</div>
+                <div class="gselect-opt" onclick="setRevFilter('next','Next up')">Next up</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="page-grid" id="review-grid"></div>
+        <div class="reset-bar" id="review-reset"></div>
+      </div>
+      
+      <!-- FAWATIH -->
+      <div class="section" id="sec-fawatih">
+        
+        <!-- Controls: type selector, mode, reset -->
+        <div class="fawatih-controls">
+          <button class="btn primary" id="fbtn-type-openings" onclick="lbSetType('openings')">Openings</button>
+          <button class="btn" id="fbtn-type-verse-refs" onclick="lbSetType('verse-refs')">Verse Refs</button>
+          <span class="lb-mode-sep" id="fbtn-mode-sep">|</span>
+          <button class="btn primary" id="fbtn-all" onclick="lbSetMode('all')">All 114</button>
+          <button class="btn" id="fbtn-known" onclick="lbSetMode('known')">Known only</button>
+          <button class="btn lb-reset-btn" onclick="lbResetBoxes()" style="margin-left:auto">⚠ reset boxes</button>
+        </div>
+
+        <!-- 5 Leitner boxes -->
+        <div class="lb-strip" id="lb-strip">
+          <div class="lb-box" id="lb-box-1">
+            <div class="lb-box-label"><span>BOX 1</span></div>
+            <div class="lb-box-num" id="lb-count-1">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-1" style="width:0%"></div></div>
+          </div>
+          <div class="lb-box" id="lb-box-2">
+            <div class="lb-box-label"><span>BOX 2</span></div>
+            <div class="lb-box-num" id="lb-count-2">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-2" style="width:0%"></div></div>
+          </div>
+          <div class="lb-box" id="lb-box-3">
+            <div class="lb-box-label"><span>BOX 3</span></div>
+            <div class="lb-box-num" id="lb-count-3">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-3" style="width:0%"></div></div>
+          </div>
+          <div class="lb-box" id="lb-box-4">
+            <div class="lb-box-label"><span>BOX 4</span></div>
+            <div class="lb-box-num" id="lb-count-4">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-4" style="width:0%"></div></div>
+          </div>
+          <div class="lb-box" id="lb-box-5">
+            <div class="lb-box-label"><span>BOX 5</span></div>
+            <div class="lb-box-num" id="lb-count-5">0</div>
+            <div class="lb-mini-bar"><div class="lb-mini-fill" id="lb-fill-5" style="width:0%"></div></div>
+          </div>
+        </div>
+
+
+        <!-- Progress bar -->
+        <div class="fp-bar-wrap">
+          <div class="fp-bar-track" id="fp-bar" style="width:0%"></div>
+        </div>
+
+        <!-- Card -->
+        <div class="card-deck" id="fp-card-deck">
+          <div class="flashcard" id="flashcard">
+            <div class="fc-face fc-front" id="fc-front">
+              <div class="fc-num" id="fc-num">—</div>
+              <div class="fc-front-context" id="fc-front-context"></div>
+              <div class="fc-front-label" id="fc-front-label"></div>
+              <div class="fc-front-arabic" id="fc-front-arabic"></div>
+              <div class="fc-box-badge" id="fc-box-badge"></div>
+              <div class="fc-hint">flip to reveal · <kbd>Space</kbd></div>
+            </div>
+            <div class="fc-face fc-back" id="fc-back">
+              <div class="fc-surah-name" id="fc-name">—</div>
+              <div class="fc-arabic" id="fc-arabic">—</div>
+              <div class="fc-opening" id="fc-opening">—</div>
+              <div class="fc-back-translit" id="fc-back-translit"></div>
+              <div class="fc-back-count" id="fc-back-count"></div>
+              <div class="fc-back-ref" id="fc-back-ref"></div>
+              <div class="fc-hint"><kbd>←</kbd> fail · <kbd>→</kbd> pass</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav: fail left, flip center, pass right -->
+        <div class="fc-nav" id="fp-nav">
+          <button class="fc-btn fail" id="lb-btn-fail" onclick="lbMarkFail()" disabled>✗ fail</button>
+          <button class="fc-btn fc-btn-flip" id="lb-btn-flip" onclick="lbFlip()">flip card</button>
+          <button class="fc-btn pass" id="lb-btn-pass" onclick="lbMarkPass()" disabled>✓ pass</button>
+        </div>
+
+        <!-- Session done overlay -->
+        <div class="fc-complete" id="fp-complete">
+          <div class="fc-complete-icon" id="fp-complete-icon">✦</div>
+          <div class="fc-complete-title" id="fp-complete-title">Session done</div>
+          <div class="fc-complete-sub" id="fp-complete-sub"></div>
+          <div class="fc-complete-actions" id="fp-complete-actions"></div>
+        </div>
+      </div>
+
+      <!-- FILE -->
+      <div class="section" id="sec-file">
+        <div class="file-section">
+          <div class="file-status-box">
+            <div class="fs-label">Sync status</div>
+            <div class="fs-val" id="fs-val"><span class="dot-unsaved"></span>not synced</div>
+          </div>
+          <div class="file-status-box" style="display:flex;flex-direction:column;gap:10px">
+            <div class="fs-label">n:point Bin ID</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input class="ginput" id="np-bin-input" placeholder="e.g. abc123def456"
+                style="flex:1;font-family:var(--mono);font-size:13px" onkeydown="if(event.key==='Enter')setNpBin()" />
+              <button class="btn primary" onclick="setNpBin()">Connect</button>
+            </div>
+            <div id="np-bin-display"
+              style="font-size:11px;font-family:var(--mono);color:var(--text-muted);word-break:break-all"></div>
+          </div>
+          <button class="fbtn" onclick="forcePush()"><span class="fbi">☁</span>
+            <div>
+              <div>Push to Cloud</div>
+              <div class="fbtn-sub">Force save current data to n:point</div>
+            </div>
+          </button>
+          <button class="fbtn" onclick="forcePull()"><span class="fbi">⬇</span>
+            <div>
+              <div>Pull from Cloud</div>
+              <div class="fbtn-sub">Overwrite local with n:point data</div>
+            </div>
+          </button>
+          <button class="fbtn" onclick="exportFallback()"><span class="fbi">💾</span>
+            <div>
+              <div>Download JSON</div>
+              <div class="fbtn-sub">Backup: download data as file</div>
+            </div>
+          </button>
+          <button class="fbtn danger" onclick="clearAll()"><span class="fbi">⚠</span>
+            <div>
+              <div>Clear All Data</div>
+              <div class="fbtn-sub">Reset everything to empty state</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /app -->
+
+
+  <script>const __defaultTab = 'file';</script>
+  <script src="../shared/script.js"></script>
+</body>
+</html>
