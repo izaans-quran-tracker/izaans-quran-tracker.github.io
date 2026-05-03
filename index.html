@@ -2135,16 +2135,26 @@
       position: fixed;
       inset: 0;
       z-index: 900;
-      background: rgba(0, 0, 0, 0.82);
+      background: rgba(0, 0, 0, 0);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: background 0.35s ease, opacity 0.35s ease;
     }
-    .np-setup-backdrop.open { display: flex }
+    .np-setup-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+      background: rgba(0, 0, 0, 0.82);
+    }
     .np-setup-modal {
+      position: relative;
       width: 100%;
       max-width: 480px;
       border-radius: 24px;
@@ -2153,7 +2163,36 @@
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
       padding: 28px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.07)
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.07);
+      transform: translateY(24px) scale(0.98);
+      opacity: 0;
+      transition: transform 0.32s ease, opacity 0.32s ease;
+    }
+    .np-setup-backdrop.open .np-setup-modal {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      transition-delay: 0.12s;
+    }
+    .np-skip-topright {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 12px;
+      font-family: var(--mono);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+    .np-skip-topright:hover {
+      color: #ff4f4f;
+      opacity: 0.9;
     }
     .np-setup-title {
       font-size: 18px;
@@ -2262,9 +2301,7 @@
         <button class="btn primary" onclick="npSetupConnect()">Connect</button>
       </div>
       <div class="np-setup-note" id="np-setup-note"></div>
-      <div style="margin-top:16px;text-align:right">
-        <button class="modal-cancel" onclick="npSetupSkip()">Skip for now</button>
-      </div>
+      <button class="modal-cancel np-skip-topright" onclick="npSetupSkip()">Skip <span aria-hidden="true">→</span></button>
     </div>
   </div>
 
@@ -2394,18 +2431,16 @@
             <div class="plan-box-title">How to Memorize</div>
             <div class="memorize-steps">
               <div class="mem-phase">
-                <div class="mem-phase-title">Phase 1 — Mishary 1 (clear, tajweed-focused)</div>
-                <div class="mem-step" style="margin-bottom:6px"><b>Passive:</b> Listen to the next group (2–10 ayahs) on loop, <b>changing start/end ayah</b> to avoid anchoring wrong memory. Goal: internalize correct pronunciation and tajweed.</div>
-                <div class="mem-step"><b>Active:</b></div>
+                <div class="mem-phase-title">Passive</div>
+                <div class="mem-step" style="margin-bottom:6px">Listen to the next group (20-40 words rounded to the ayah) on loop, <b>changing start/end ayah</b> to avoid anchoring wrong memory.</div>
+              </div>
+              <div class="mem-phase">
+                <div class="mem-phase-title">Active</div>
                 <div class="mem-step"><b>1.</b> Listen to next 2 ayahs 10× while looking at verse number (split long ayahs at stopping points)</div>
                 <div class="mem-step"><b>2a.</b> Read verse 5–25× until smooth</div>
                 <div class="mem-step"><b>2b.</b> Recite along 5–25×</div>
                 <div class="mem-step"><b>2c.</b> Recite on Tarteel and note mistakes/hesitations</div>
                 <div class="mem-step"><b>3.</b> Repeat for pair: 1+2, then 2+3, then 3+4…</div>
-              </div>
-              <div class="mem-phase">
-                <div class="mem-phase-title">Phase 2 — Mishary 2 (style-focused, once Phase 1 group is memorized)</div>
-                <div class="mem-step"><b>Passive:</b> Listen to the same group (2–10 ayahs) on loop with Mishary 2, <b>changing start/end ayah</b> to avoid anchoring wrong memory. Goal: re-memorize with good recitation style.</div>
               </div>
             </div>
           </div>
@@ -2841,8 +2876,11 @@
     function checkNpSetup() {
       const bin = localStorage.getItem('hifz_np_bin');
       if (!bin || bin === 'YOUR_BIN_ID_HERE') {
-        document.getElementById('np-setup-modal').classList.add('open');
-        setTimeout(() => document.getElementById('np-setup-input').focus(), 100);
+        setTimeout(() => {
+          const modal = document.getElementById('np-setup-modal');
+          modal.classList.add('open');
+          setTimeout(() => document.getElementById('np-setup-input').focus(), 100);
+        }, 2000);
       }
     }
     function npSetupSkip() {
