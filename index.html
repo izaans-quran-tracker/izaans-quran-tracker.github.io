@@ -43,6 +43,11 @@
       --mono: 'JetBrains Mono', monospace;
       --arabic: 'Noto Naskh Arabic', serif;
       --radius: 20px;
+      --radius-sm: 12px;
+      --radius-lg: 28px;
+      --shadow-elev: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06);
+      --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
     }
 
     html,
@@ -225,7 +230,6 @@
         transform: translate(65px, -80px) scale(1.1)
       }
     }
-    }
 
     @keyframes ob8 {
 
@@ -262,14 +266,28 @@
       flex-direction: column
     }
 
+    .app-shell {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0
+    }
+
     /* ── TOPBAR ── */
     #topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 24px 0;
+      padding: 18px 28px 14px;
       gap: 16px;
-      flex-wrap: wrap
+      flex-wrap: wrap;
+      background: rgba(8, 3, 3, 0.55);
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.06)
     }
 
     .logo {
@@ -292,8 +310,8 @@
     .logo-sub {
       font-size: 10px;
       font-family: var(--mono);
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.28);
+      letter-spacing: 0.14em;
       text-transform: uppercase
     }
 
@@ -308,7 +326,11 @@
       font-size: 10px;
       font-family: var(--mono);
       color: var(--text-muted);
-      white-space: nowrap
+      white-space: nowrap;
+      padding: 6px 12px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 0.5px solid var(--glass-border)
     }
 
     .dot-saved {
@@ -346,25 +368,26 @@
     /* ── TABS (full width, v1 style) ── */
     #tabs {
       display: flex;
-      gap: 4px;
-      padding: 16px 24px 0;
-      border-bottom: 0.5px solid var(--glass-border);
-      margin-top: 12px
+      gap: 6px;
+      padding: 12px 28px 0;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+      margin-top: 0;
+      background: rgba(8, 3, 3, 0.35)
     }
 
     .tab {
       flex: 1;
       text-align: center;
-      padding: 10px 18px;
+      padding: 11px 20px;
       font-size: 13px;
-      font-weight: 500;
-      border-radius: 12px 12px 0 0;
+      font-weight: 600;
+      border-radius: 14px 14px 0 0;
       border: 0.5px solid transparent;
       border-bottom: none;
       cursor: pointer;
       color: var(--text-muted);
       background: transparent;
-      transition: all 0.2s;
+      transition: color 0.2s var(--ease-out), background 0.2s var(--ease-out), border-color 0.2s, box-shadow 0.2s;
       letter-spacing: 0.01em;
       white-space: nowrap
     }
@@ -376,20 +399,31 @@
 
     .tab.active {
       color: var(--text);
-      background: var(--glass);
+      background: rgba(14, 6, 6, 0.75);
       border-color: var(--glass-border);
       border-bottom-color: transparent;
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px)
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 -2px 20px rgba(255, 59, 48, 0.06)
     }
 
     /* ── CONTENT ── */
     #content {
       flex: 1;
-      padding: 24px;
+      min-height: 0;
+      padding: 28px 28px 32px;
       display: flex;
       flex-direction: column;
       box-sizing: border-box
+    }
+
+    .sec-label {
+      font-size: 10px;
+      font-family: var(--mono);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted)
     }
 
     .section {
@@ -403,6 +437,7 @@
       display: flex;
       flex-direction: column;
       flex: 1;
+      min-height: 0;
       animation: secIn 0.3s cubic-bezier(0.34, 1.1, 0.64, 1) both
     }
 
@@ -633,8 +668,8 @@
 
     .page-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 10px
+      grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+      gap: 14px
     }
 
     /* breathing idle - 2px only, no movement */
@@ -652,21 +687,19 @@
 
     .pcard {
       position: relative;
-      border-radius: var(--radius);
+      border-radius: var(--radius-lg);
       border: 0.5px solid var(--glass-border);
       background: var(--glass);
       backdrop-filter: blur(24px) saturate(1.4);
       -webkit-backdrop-filter: blur(24px) saturate(1.4);
-      padding: 14px 16px 13px;
-      /* color transitions */
+      padding: 16px 18px 15px;
       transition:
-        border-color 0.45s ease,
-        background 0.45s ease,
-        box-shadow 0.45s ease,
-        transform 0.18s ease;
+        border-color 0.35s var(--ease-out),
+        background 0.35s var(--ease-out),
+        box-shadow 0.35s var(--ease-out),
+        transform 0.2s var(--ease-out);
       overflow: hidden;
       user-select: none;
-      /* breathing */
       animation: breathe var(--bd, 7s) ease-in-out var(--bdelay, 0s) infinite;
       will-change: transform;
     }
@@ -698,7 +731,7 @@
       --hover-lift: -4px;
       border-color: rgba(255, 255, 255, 0.13);
       background: var(--glass-hover);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28)
+      box-shadow: var(--shadow-card-hover)
     }
 
     .pcard:active {
@@ -930,10 +963,6 @@
       font-size: 12px
     }
 
-    .pcard {
-      animation: breathe var(--bd, 7s) ease-in-out var(--bdel, 0s) infinite
-    }
-
     /* ── MODAL ── */
     .modal-backdrop {
       position: fixed;
@@ -955,20 +984,21 @@
     .modal {
       width: 100%;
       max-width: 440px;
-      border-radius: 24px;
+      border-radius: var(--radius-lg);
       border: 0.5px solid var(--glass-border);
       background: rgba(12, 4, 4, 0.92);
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
       padding: 24px;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.07)
+      box-shadow: var(--shadow-elev), 0 0 0 0.5px rgba(255, 255, 255, 0.05) inset
     }
 
     .modal-title {
       font-size: 16px;
       font-weight: 600;
       margin-bottom: 16px;
-      color: var(--text)
+      color: var(--text);
+      letter-spacing: -0.02em
     }
 
     .modal-field {
@@ -1079,7 +1109,7 @@
     .lb-strip {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 1rem
     }
     .lb-box {
@@ -1088,7 +1118,7 @@
       background: var(--glass);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      padding: 10px 10px 8px;
+      padding: 12px 12px 10px;
       display: flex;
       flex-direction: column;
       gap: 5px;
@@ -1507,8 +1537,9 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
-      gap: 16px;
-      height: calc(100dvh - 175px)
+      gap: 20px;
+      flex: 1;
+      min-height: 0
     }
 
     .plan-grid>.plan-box:nth-child(1) {
@@ -1536,22 +1567,25 @@
     }
 
     .plan-box {
-      border-radius: var(--radius);
+      border-radius: var(--radius-lg);
       border: 0.5px solid var(--glass-border);
       background: var(--glass);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      padding: 16px 18px;
+      padding: 18px 20px;
       display: flex;
       flex-direction: column;
-      overflow: hidden
+      overflow: hidden;
+      box-shadow: var(--shadow-elev)
     }
 
     .plan-box-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 8px
@@ -1654,20 +1688,21 @@
     .ayah-edit-modal {
       width: 100%;
       max-width: 400px;
-      border-radius: 24px;
+      border-radius: var(--radius-lg);
       border: 0.5px solid var(--glass-border);
       background: rgba(12,4,4,0.95);
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
       padding: 22px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07)
+      box-shadow: var(--shadow-elev), 0 0 0 0.5px rgba(255,255,255,0.05) inset
     }
 
     .aem-title {
       font-size: 14px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 14px
+      margin-bottom: 14px;
+      letter-spacing: -0.02em
     }
 
     .aem-ref-display {
@@ -1754,20 +1789,21 @@
     .add-ayah-modal {
       width: 100%;
       max-width: 420px;
-      border-radius: 24px;
+      border-radius: var(--radius-lg);
       border: 0.5px solid var(--glass-border);
       background: rgba(12,4,4,0.95);
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
       padding: 22px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07)
+      box-shadow: var(--shadow-elev), 0 0 0 0.5px rgba(255,255,255,0.05) inset
     }
 
     .aam-title {
       font-size: 14px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 6px
+      margin-bottom: 6px;
+      letter-spacing: -0.02em
     }
 
     .aam-hint {
@@ -1880,7 +1916,10 @@
     .memorize-steps {
       display: flex;
       flex-direction: column;
-      gap: 8px
+      gap: 8px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto
     }
 
     /* roadmap edit controls */
@@ -2157,13 +2196,13 @@
       position: relative;
       width: 100%;
       max-width: 480px;
-      border-radius: 24px;
+      border-radius: var(--radius-lg);
       border: 0.5px solid var(--glass-border);
       background: rgba(10, 3, 3, 0.96);
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
       padding: 28px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.07);
+      box-shadow: var(--shadow-elev), 0 0 0 0.5px rgba(255,255,255,0.05) inset;
       transform: translateY(24px) scale(0.98);
       opacity: 0;
       transition: transform 0.32s ease, opacity 0.32s ease;
@@ -2198,7 +2237,8 @@
       font-size: 18px;
       font-weight: 700;
       color: var(--text);
-      margin-bottom: 6px
+      margin-bottom: 6px;
+      letter-spacing: -0.02em
     }
     .np-setup-sub {
       font-size: 12px;
@@ -2251,8 +2291,6 @@
       font-family: var(--mono);
       color: var(--text-muted);
       margin-top: 6px
-    }
-      border-radius: 2px
     }
   </style>
 </head>
@@ -2390,6 +2428,7 @@
   </div>
 
   <div id="app">
+    <div class="app-shell">
     <!-- TOPBAR -->
     <div id="topbar">
       <div class="logo">
@@ -2617,6 +2656,7 @@
       </div>
 
     </div><!-- /content -->
+    </div><!-- /app-shell -->
   </div><!-- /app -->
 
   <script>
