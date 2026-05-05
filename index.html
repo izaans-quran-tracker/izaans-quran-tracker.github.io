@@ -2330,6 +2330,11 @@
     <div class="add-ayah-modal">
       <div class="aam-title">Add Verse(s)</div>
       <div class="aam-hint">Format examples: <span style="color:var(--text-dim)">2:1-6</span> · <span style="color:var(--text-dim)">2:255</span> · <span style="color:var(--text-dim)">1</span> · <span style="color:var(--text-dim)">108-114</span> · <span style="color:var(--text-dim)">19:1-33</span> · <span style="color:var(--text-dim)">2:284-3:20</span></div>
+      <div class="modal-label" style="margin-bottom:6px">Type</div>
+      <div class="aem-type-row">
+        <div class="aem-type-btn active-qiraat" id="aam-btn-qiraat" onclick="aamSetType('qiraat')">● Qiraat</div>
+        <div class="aem-type-btn" id="aam-btn-memory" onclick="aamSetType('memory')">○ Memory</div>
+      </div>
       <input class="aam-input" id="aam-input" type="text" placeholder="e.g. 19:1-33 or 108-114"
         onkeydown="if(event.key==='Enter')submitAddAyah()" />
       <div class="aam-error" id="aam-error"></div>
@@ -3088,12 +3093,11 @@
         const verseLabel = condenseVerseList(ownedPageVs, surahMeta);
         if (!verseLabel) continue; // page has none of our verses
 
-        // ln: * if ownership covers the whole page, otherwise count owned lines
+        // ln: * only if every verse on the page is owned (not just first+last — avoids
+        // false "full" when a page spans e.g. 103 · 104 · 105 but only 103+105 are known).
         let ln = '*';
         try {
-          const firstPageKey = pageVerses[0].verse_key;
-          const lastPageKey  = pageVerses[pageVerses.length - 1].verse_key;
-          const fullPage     = ownershipKeys.has(firstPageKey) && ownershipKeys.has(lastPageKey);
+          const fullPage = pageVerses.every(pv => ownershipKeys.has(pv.verse_key));
           if (!fullPage) {
             const lineTotals   = new Map();
             const lineRangeOwn = new Map();
@@ -3228,11 +3232,18 @@
     }
 
     // --- Add Ayah Modal ---
+    let _aamType = 'qiraat';
+    function aamSetType(t) {
+      _aamType = t;
+      document.getElementById('aam-btn-qiraat').className = 'aem-type-btn' + (t === 'qiraat' ? ' active-qiraat' : '');
+      document.getElementById('aam-btn-memory').className = 'aem-type-btn' + (t === 'memory' ? ' active-memory' : '');
+    }
     function openAddAyahModal() {
       document.getElementById('add-ayah-modal').classList.add('open');
       document.getElementById('aam-input').value = '';
       document.getElementById('aam-error').textContent = '';
       document.getElementById('aam-loading').textContent = '';
+      aamSetType('qiraat');
       setTimeout(() => document.getElementById('aam-input').focus(), 50);
     }
     function closeAddAyahModal() {
@@ -3351,10 +3362,9 @@
           const meta = await getSurahMeta();
           pg.verses = condenseVerseList(ownedVs, meta);
 
-          // Recompute ln
-          const firstKey = pageVerses[0].verse_key;
-          const lastKey  = pageVerses[pageVerses.length - 1].verse_key;
-          if (allKnownKeys && allKnownKeys.has(firstKey) && allKnownKeys.has(lastKey)) {
+          // Recompute ln (every verse on the physical page must be known for *)
+          const fullPage = allKnownKeys && pageVerses.every(pv => allKnownKeys.has(pv.verse_key));
+          if (fullPage) {
             pg.ln = '*';
           } else {
             const lineTotals = new Map();
@@ -3382,7 +3392,8 @@
     // entries and collapse them into a single bare-number label (e.g. "19").
     // Runs even if bare label already exists — cleans up zombie partials.
     // After any add, normalize knownAyat entries per surah:
-    // - Merge contiguous/adjacent single-surah ranges (19:1-33 + 19:34-97 → 19:1-97)
+    // - Merge contiguous/adjacent single-surah ranges within the SAME type only
+    //   (2:255 qiraat + 2:256 memory stay separate; both qiraat → 2:255-256)
     // - Collapse to bare number when full surah is covered (19:1-98 → 19)
     // Cross-surah entries (e.g. 2:284-3:20) are left alone.
     async function normalizeKnownAyat() {
@@ -3390,53 +3401,41 @@
       if (!meta) return;
 
       for (let surah = 1; surah <= 114; surah++) {
-        const total = meta[surah];
-
         const isSingleSurahLabel = (label) => {
           const vs = parseVerseRangeSync(label, meta);
           if (!vs || !vs.length) return false;
           return vs.every(v => v.surah === surah);
         };
 
-        const qContrib = D.knownAyat.qiraat.filter(isSingleSurahLabel);
-        const mContrib = D.knownAyat.memory.filter(isSingleSurahLabel);
-        const allContrib = [...qContrib, ...mContrib];
+        for (const type of ['qiraat', 'memory']) {
+          const contrib = D.knownAyat[type].filter(isSingleSurahLabel);
+          if (contrib.length <= 1) continue;
 
-        // Nothing to normalize if 0 or 1 label
-        if (allContrib.length <= 1) continue;
+          const ayahSet = new Set();
+          for (const l of contrib) {
+            const vs = parseVerseRangeSync(l, meta);
+            if (vs) vs.forEach(({ surah: s, ayah: a }) => { if (s === surah) ayahSet.add(a); });
+          }
 
-        // Expand all verses for this surah across all contributing labels
-        const ayahSet = new Set();
-        for (const l of allContrib) {
-          const vs = parseVerseRangeSync(l, meta);
-          if (vs) vs.forEach(({ surah: s, ayah: a }) => { if (s === surah) ayahSet.add(a); });
+          const sortedVs = [...ayahSet].sort((a, b) => a - b).map(a => ({ surah, ayah: a }));
+          const newLabel = condenseVerseList(sortedVs, meta);
+          if (!newLabel) continue;
+
+          if (contrib.length === 1 && contrib[0] === newLabel) continue;
+
+          const oldLabelSet = new Set(contrib);
+
+          for (const pg of D.pages) {
+            if (!pg.sourceLabels) continue;
+            const hadOld = pg.sourceLabels.some(l => oldLabelSet.has(l));
+            if (!hadOld) continue;
+            pg.sourceLabels = pg.sourceLabels.filter(l => !oldLabelSet.has(l));
+            if (!pg.sourceLabels.includes(newLabel)) pg.sourceLabels.push(newLabel);
+          }
+
+          D.knownAyat[type] = D.knownAyat[type].filter(l => !contrib.includes(l));
+          D.knownAyat[type].push(newLabel);
         }
-
-        // Re-condense into minimal label(s)
-        const sortedVs = [...ayahSet].sort((a, b) => a - b).map(a => ({ surah, ayah: a }));
-        const newLabel = condenseVerseList(sortedVs, meta); // uses meta → collapses full surah to bare number
-        if (!newLabel) continue;
-
-        // No change needed if result is already what we have as a single entry
-        if (allContrib.length === 1 && allContrib[0] === newLabel) continue;
-
-        // Determine target list: qiraat wins if any contributor is qiraat
-        const targetType = qContrib.length > 0 ? 'qiraat' : 'memory';
-        const oldLabelSet = new Set(allContrib);
-
-        // Update sourceLabels on affected pages
-        for (const pg of D.pages) {
-          if (!pg.sourceLabels) continue;
-          const hadOld = pg.sourceLabels.some(l => oldLabelSet.has(l));
-          if (!hadOld) continue;
-          pg.sourceLabels = pg.sourceLabels.filter(l => !oldLabelSet.has(l));
-          if (!pg.sourceLabels.includes(newLabel)) pg.sourceLabels.push(newLabel);
-        }
-
-        // Remove old labels, add merged label
-        D.knownAyat.qiraat = D.knownAyat.qiraat.filter(l => !qContrib.includes(l));
-        D.knownAyat.memory  = D.knownAyat.memory.filter(l => !mContrib.includes(l));
-        D.knownAyat[targetType].push(newLabel);
       }
     }
 
@@ -3474,10 +3473,11 @@
 
       // For surah ranges (e.g. 108-114): push one knownAyat entry per surah.
       // For everything else: push a single entry with the raw label.
+      const targetList = _aamType === 'memory' ? 'memory' : 'qiraat';
       const labels = surahLabels || [label];
       for (const l of labels) {
         if (!D.knownAyat.qiraat.includes(l) && !D.knownAyat.memory.includes(l)) {
-          D.knownAyat.qiraat.push(l);
+          D.knownAyat[targetList].push(l);
         }
       }
 
@@ -3568,13 +3568,14 @@
       document.getElementById('aem-btn-memory').className = 'aem-type-btn' + (t === 'memory' ? ' active-memory' : '');
     }
 
-    function aemSave() {
+    async function aemSave() {
       const newVal = document.getElementById('aem-text').value.trim();
       if (!newVal) return;
       // remove from original
       D.knownAyat[_aemOrigType].splice(_aemIdx, 1);
       // add to new type
       D.knownAyat[_aemType].push(newVal);
+      await normalizeKnownAyat();
       persist(); renderAll(); initDeck();
       closeAyahEditModal();
     }
@@ -3589,11 +3590,12 @@
       closeAyahEditModal();
     }
 
-    function toggleAyahType(type, idx) {
+    async function toggleAyahType(type, idx) {
       const val = D.knownAyat[type][idx];
       D.knownAyat[type].splice(idx, 1);
       const newType = type === 'qiraat' ? 'memory' : 'qiraat';
       D.knownAyat[newType].push(val);
+      await normalizeKnownAyat();
       persist(); renderAll(); initDeck();
     }
 
