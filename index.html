@@ -281,13 +281,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 28px 14px;
+      padding: 16px 24px 0;
       gap: 16px;
-      flex-wrap: wrap;
-      background: rgba(8, 3, 3, 0.55);
-      backdrop-filter: blur(20px) saturate(1.2);
-      -webkit-backdrop-filter: blur(20px) saturate(1.2);
-      border-bottom: 0.5px solid rgba(255, 255, 255, 0.06)
+      flex-wrap: wrap
     }
 
     .logo {
@@ -310,8 +306,8 @@
     .logo-sub {
       font-size: 10px;
       font-family: var(--mono);
-      color: rgba(255, 255, 255, 0.28);
-      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
       text-transform: uppercase
     }
 
@@ -326,11 +322,7 @@
       font-size: 10px;
       font-family: var(--mono);
       color: var(--text-muted);
-      white-space: nowrap;
-      padding: 6px 12px;
-      border-radius: 100px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 0.5px solid var(--glass-border)
+      white-space: nowrap
     }
 
     .dot-saved {
@@ -368,26 +360,25 @@
     /* ── TABS (full width, v1 style) ── */
     #tabs {
       display: flex;
-      gap: 6px;
-      padding: 12px 28px 0;
-      border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
-      margin-top: 0;
-      background: rgba(8, 3, 3, 0.35)
+      gap: 4px;
+      padding: 16px 24px 0;
+      border-bottom: 0.5px solid var(--glass-border);
+      margin-top: 12px
     }
 
     .tab {
       flex: 1;
       text-align: center;
-      padding: 11px 20px;
+      padding: 10px 18px;
       font-size: 13px;
-      font-weight: 600;
-      border-radius: 14px 14px 0 0;
+      font-weight: 500;
+      border-radius: 12px 12px 0 0;
       border: 0.5px solid transparent;
       border-bottom: none;
       cursor: pointer;
       color: var(--text-muted);
       background: transparent;
-      transition: color 0.2s var(--ease-out), background 0.2s var(--ease-out), border-color 0.2s, box-shadow 0.2s;
+      transition: all 0.2s;
       letter-spacing: 0.01em;
       white-space: nowrap
     }
@@ -399,19 +390,17 @@
 
     .tab.active {
       color: var(--text);
-      background: rgba(14, 6, 6, 0.75);
+      background: var(--glass);
       border-color: var(--glass-border);
       border-bottom-color: transparent;
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 -2px 20px rgba(255, 59, 48, 0.06)
+      -webkit-backdrop-filter: blur(20px)
     }
 
     /* ── CONTENT ── */
     #content {
       flex: 1;
-      min-height: 0;
-      padding: 28px 28px 32px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       box-sizing: border-box
@@ -1538,8 +1527,7 @@
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
       gap: 20px;
-      flex: 1;
-      min-height: 0
+      height: calc(100dvh - 175px)
     }
 
     .plan-grid>.plan-box:nth-child(1) {
@@ -1567,7 +1555,7 @@
     }
 
     .plan-box {
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius);
       border: 0.5px solid var(--glass-border);
       background: var(--glass);
       backdrop-filter: blur(20px);
@@ -1575,16 +1563,15 @@
       padding: 18px 20px;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      box-shadow: var(--shadow-elev)
+      overflow: hidden
     }
 
     .plan-box-title {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: normal;
+      text-transform: none;
+      color: var(--text);
       margin-bottom: 12px;
       display: flex;
       align-items: center;
@@ -2367,14 +2354,18 @@
   <div class="add-ayah-modal-backdrop" id="add-ayah-modal">
     <div class="add-ayah-modal">
       <div class="aam-title">Add Verse(s)</div>
-      <div class="aam-hint">Format examples: <span style="color:var(--text-dim)">2:1-6</span> · <span style="color:var(--text-dim)">2:255</span> · <span style="color:var(--text-dim)">1</span> · <span style="color:var(--text-dim)">108-114</span> · <span style="color:var(--text-dim)">19:1-33</span> · <span style="color:var(--text-dim)">2:284-3:20</span></div>
+      <div class="aam-hint">
+        <span style="color:var(--text-dim)">19:1-33</span> · <span style="color:var(--text-dim)">19;-33</span> (from ayah 1) · <span style="color:var(--text-dim)">105;2-</span> (to end) · <span style="color:var(--text-dim)">2:255</span> · <span style="color:var(--text-dim)">93</span><br>
+        <span style="color:var(--text-muted)">Comma = multiple: </span><span style="color:var(--text-dim)">105,103</span> · <span style="color:var(--text-dim)">2;255,2;284-286</span> · <span style="color:var(--text-dim)">93,94,95</span><br>
+        <span style="color:var(--text-muted)">; acts as : — right-click an entry to edit it</span>
+      </div>
       <div class="modal-label" style="margin-bottom:6px">Type</div>
       <div class="aem-type-row">
         <div class="aem-type-btn active-qiraat" id="aam-btn-qiraat" onclick="aamSetType('qiraat')">● Qiraat</div>
         <div class="aem-type-btn" id="aam-btn-memory" onclick="aamSetType('memory')">○ Memory</div>
       </div>
-      <input class="aam-input" id="aam-input" type="text" placeholder="e.g. 19:1-33 or 108-114"
-        onkeydown="if(event.key==='Enter')submitAddAyah()" />
+      <input class="aam-input" id="aam-input" type="text" placeholder="e.g. 19:1-33 or 93,94,95"
+        onkeydown="if(event.key==='Enter')submitAddAyah()" placeholder="e.g. 19:1-33 or 93,94,95" />
       <div class="aam-error" id="aam-error"></div>
       <div class="aam-loading" id="aam-loading"></div>
       <div class="aam-actions">
@@ -2970,7 +2961,8 @@
 
     function toggleDone(e, pNum) {
       e.stopPropagation();
-      const allDone = D.pages.length > 0 && D.pages.every(p => p.done);
+      const dottedPages = D.pages.filter(p => p.page !== 1);
+      const allDone = dottedPages.length > 0 && dottedPages.every(p => p.done);
       if (allDone) {
         D.pages.forEach(p => p.done = false);
         persist(); renderAll(); // full reset — all cards change
@@ -2980,7 +2972,8 @@
         persist();
         patchCard(pNum);
         // Update reset bar
-        const allNowDone = D.pages.length > 0 && D.pages.every(p => p.done);
+        const dottedNow = D.pages.filter(p => p.page !== 1);
+        const allNowDone = dottedNow.length > 0 && dottedNow.every(p => p.done);
         const rb = document.getElementById('review-reset');
         if (rb) {
           rb.textContent = allNowDone ? '// all pages done — tap any red dot to reset all' : '';
@@ -3021,7 +3014,8 @@
       const gridEl = document.getElementById('review-grid');
       gridEl.innerHTML = filtered.length ? filtered.map((p, i) => makeCard(p, i)).join('') : '<div class="empty">No pages match.</div>';
       // reset bar
-      const allDone = D.pages.length > 0 && D.pages.every(p => p.done);
+      const dottedPages = D.pages.filter(p => p.page !== 1);
+      const allDone = dottedPages.length > 0 && dottedPages.every(p => p.done);
       const rb = document.getElementById('review-reset');
       rb.textContent = allDone ? '// all pages done — tap any red dot to reset all' : '';
       rb.className = 'reset-bar' + (allDone ? ' all-done' : '');
@@ -3197,31 +3191,35 @@
     async function parseVerseRange(raw) {
       const meta = await getSurahMeta();
       if (!meta) return { err: 'Could not reach API. Check connection.' };
-      const str = raw.trim();
+      const str = raw.trim().replace(/;/g, ':');
       // patterns:
-      // "1" → whole surah 1
-      // "108-114" → surahs 108 to 114 (each whole)
+      // "1" → whole surah
       // "2:255" → single ayah
       // "2:1-6" → range within surah
-      // "2:284-3:20" → cross-surah range
-      // "19:1-33" → range within surah
+      // "105:2-" → 105:2 to end of surah (trailing dash)
+      // "18:-97" → 18:1-97 (leading dash)
 
       let verses = []; // [{surah, ayah}]
 
-      // cross-surah: X:A-Y:B
-      const crossMatch = str.match(/^(\d+):(\d+)-(\d+):(\d+)$/);
-      if (crossMatch) {
-        const [,s1,a1,s2,a2] = crossMatch.map(Number);
-        if (!meta[s1] || !meta[s2]) return { err: `Surah ${!meta[s1]?s1:s2} not found.` };
-        if (a1 < 1 || a1 > meta[s1]) return { err: `${s1}:${a1} doesn't exist (max ${meta[s1]}).` };
-        if (a2 < 1 || a2 > meta[s2]) return { err: `${s2}:${a2} doesn't exist (max ${meta[s2]}).` };
-        // collect from s1:a1 to end of s1
-        for (let a = a1; a <= meta[s1]; a++) verses.push({surah:s1,ayah:a});
-        // whole surahs in between
-        for (let s = s1+1; s < s2; s++) for (let a = 1; a <= meta[s]; a++) verses.push({surah:s,ayah:a});
-        // start of s2 to a2
-        for (let a = 1; a <= a2; a++) verses.push({surah:s2,ayah:a});
-        return { verses, label: str };
+      // trailing dash: X:A- → X:A to end of surah
+      const trailingDash = str.match(/^(\d+):(\d+)-$/);
+      if (trailingDash) {
+        const [,s,a1] = trailingDash.map(Number);
+        if (!meta[s]) return { err: `Surah ${s} not found.` };
+        const a2 = meta[s];
+        if (a1 < 1 || a1 > a2) return { err: `${s}:${a1} doesn't exist (max ${a2}).` };
+        for (let a = a1; a <= a2; a++) verses.push({surah:s,ayah:a});
+        return { verses, label: `${s}:${a1}-${a2}` };
+      }
+
+      // leading dash: X:-B → X:1-B
+      const leadingDash = str.match(/^(\d+):-(\d+)$/);
+      if (leadingDash) {
+        const [,s,a2] = leadingDash.map(Number);
+        if (!meta[s]) return { err: `Surah ${s} not found.` };
+        if (a2 < 1 || a2 > meta[s]) return { err: `${s}:${a2} doesn't exist (max ${meta[s]}).` };
+        for (let a = 1; a <= a2; a++) verses.push({surah:s,ayah:a});
+        return { verses, label: `${s}:1-${a2}` };
       }
 
       // within-surah range: X:A-B
@@ -3244,21 +3242,6 @@
         return { verses, label: str };
       }
 
-      // surah range: A-B (whole surahs) → expand to individual surah entries
-      const surahRangeMatch = str.match(/^(\d+)-(\d+)$/);
-      if (surahRangeMatch) {
-        const [,s1,s2] = surahRangeMatch.map(Number);
-        if (!meta[s1]) return { err: `Surah ${s1} not found.` };
-        if (!meta[s2]) return { err: `Surah ${s2} not found.` };
-        if (s2 < s1) return { err: `${s1}-${s2}: end must be ≥ start.` };
-        const verses = [];
-        for (let s = s1; s <= s2; s++) for (let a = 1; a <= meta[s]; a++) verses.push({surah:s,ayah:a});
-        // Return individual surah labels so knownAyat gets one entry per surah
-        const surahLabels = [];
-        for (let s = s1; s <= s2; s++) surahLabels.push(String(s));
-        return { verses, label: str, surahLabels };
-      }
-
       // single surah: X
       const surahMatch = str.match(/^(\d+)$/);
       if (surahMatch) {
@@ -3268,7 +3251,7 @@
         return { verses, label: str };
       }
 
-      return { err: `Can't parse "${str}". Use formats like: 2:255, 19:1-33, 108-114, 2:284-3:20` };
+      return { err: `Can't parse "${str}". Use formats like: 2:255, 19:1-33, 19;-33, 105;2-, 93` };
     }
 
     // --- Add Ayah Modal ---
@@ -3297,15 +3280,23 @@
     // pre-loaded meta (no API calls). Returns [{surah,ayah}] or null.
     function parseVerseRangeSync(str, meta) {
       if (!meta) return null;
-      str = str.trim();
-      const crossMatch = str.match(/^(\d+):(\d+)-(\d+):(\d+)$/);
-      if (crossMatch) {
-        const [,s1,a1,s2,a2] = crossMatch.map(Number);
-        if (!meta[s1] || !meta[s2]) return null;
+      str = str.trim().replace(/;/g, ':');
+      // trailing dash: X:A- → X:A to end of surah
+      const trailingDash = str.match(/^(\d+):(\d+)-$/);
+      if (trailingDash) {
+        const [,s,a1] = trailingDash.map(Number);
+        if (!meta[s]) return null;
         const vs = [];
-        for (let a = a1; a <= meta[s1]; a++) vs.push({surah:s1,ayah:a});
-        for (let s = s1+1; s < s2; s++) for (let a = 1; a <= meta[s]; a++) vs.push({surah:s,ayah:a});
-        for (let a = 1; a <= a2; a++) vs.push({surah:s2,ayah:a});
+        for (let a = a1; a <= meta[s]; a++) vs.push({surah:s,ayah:a});
+        return vs;
+      }
+      // leading dash: X:-B → X:1-B
+      const leadingDash = str.match(/^(\d+):-(\d+)$/);
+      if (leadingDash) {
+        const [,s,a2] = leadingDash.map(Number);
+        if (!meta[s] || a2 < 1 || a2 > meta[s]) return null;
+        const vs = [];
+        for (let a = 1; a <= a2; a++) vs.push({surah:s,ayah:a});
         return vs;
       }
       const rangeMatch = str.match(/^(\d+):(\d+)-(\d+)$/);
@@ -3321,14 +3312,6 @@
         const [,s,a] = singleMatch.map(Number);
         if (!meta[s] || a < 1 || a > meta[s]) return null;
         return [{surah:s,ayah:a}];
-      }
-      const surahRangeMatch = str.match(/^(\d+)-(\d+)$/);
-      if (surahRangeMatch) {
-        const [,s1,s2] = surahRangeMatch.map(Number);
-        if (!meta[s1] || !meta[s2] || s2 < s1) return null;
-        const vs = [];
-        for (let s = s1; s <= s2; s++) for (let a = 1; a <= meta[s]; a++) vs.push({surah:s,ayah:a});
-        return vs;
       }
       const surahMatch = str.match(/^(\d+)$/);
       if (surahMatch) {
@@ -3435,7 +3418,7 @@
     // - Merge contiguous/adjacent single-surah ranges within the SAME type only
     //   (2:255 qiraat + 2:256 memory stay separate; both qiraat → 2:255-256)
     // - Collapse to bare number when full surah is covered (19:1-98 → 19)
-    // Cross-surah entries (e.g. 2:284-3:20) are left alone.
+    // After any add, normalize knownAyat entries per surah:
     async function normalizeKnownAyat() {
       const meta = await getSurahMeta();
       if (!meta) return;
@@ -3487,62 +3470,78 @@
       errEl.textContent = '';
       loadEl.textContent = 'Validating…';
 
-      const result = await parseVerseRange(raw);
-      if (result.err) {
-        errEl.textContent = result.err;
-        loadEl.textContent = '';
-        return;
+      // Split by comma → individual chunks, normalize (;→:) each
+      const chunks = raw.split(',').map(c => c.trim().replace(/;/g, ':')).filter(Boolean);
+
+      // Parse all chunks up front — fail fast on any error
+      const parsed = [];
+      for (const chunk of chunks) {
+        const result = await parseVerseRange(chunk);
+        if (result.err) { errEl.textContent = result.err; loadEl.textContent = ''; return; }
+        parsed.push(result);
       }
 
-      const { verses, label, surahLabels } = result;
-
-      // Check for overlap with already-known verses BEFORE adding anything.
-      // buildAllKnownVerseKeys reads D.knownAyat as-is (nothing added yet).
+      // Overlap check: against already-known AND within this batch
       const currentKnown = await buildAllKnownVerseKeys();
-      if (currentKnown) {
-        const overlapping = verses.filter(v => currentKnown.has(`${v.surah}:${v.ayah}`));
-        if (overlapping.length > 0) {
-          // Build a compact label of just the overlapping verses for the message
-          const meta = await getSurahMeta();
-          const overlapLabel = condenseVerseList(overlapping, meta);
-          errEl.textContent = `Already known: ${overlapLabel}`;
-          loadEl.textContent = '';
-          return;
+      const batchKeys = new Set();
+      for (const { verses } of parsed) {
+        if (currentKnown) {
+          const dup = verses.filter(v => currentKnown.has(`${v.surah}:${v.ayah}`) || batchKeys.has(`${v.surah}:${v.ayah}`));
+          if (dup.length > 0) {
+            const meta = await getSurahMeta();
+            errEl.textContent = `Already known: ${condenseVerseList(dup, meta)}`;
+            loadEl.textContent = '';
+            return;
+          }
         }
+        verses.forEach(v => batchKeys.add(`${v.surah}:${v.ayah}`));
       }
 
-      // For surah ranges (e.g. 108-114): push one knownAyat entry per surah.
-      // For everything else: push a single entry with the raw label.
+      // Add all labels to knownAyat
       const targetList = _aamType === 'memory' ? 'memory' : 'qiraat';
-      const labels = surahLabels || [label];
-      for (const l of labels) {
-        if (!D.knownAyat.qiraat.includes(l) && !D.knownAyat.memory.includes(l)) {
-          D.knownAyat[targetList].push(l);
+      for (const { label, surahLabels } of parsed) {
+        const labels = surahLabels || [label];
+        for (const l of labels) {
+          if (!D.knownAyat.qiraat.includes(l) && !D.knownAyat.memory.includes(l)) {
+            D.knownAyat[targetList].push(l);
+          }
         }
       }
 
-      // Build review cards (one per page) — sourceLabel is the raw input label
-      // so deleting the individual surah entry only removes its own pages.
-      // We build cards from the full verse list but tag each card with the
-      // surah-level label it belongs to.
+      // Build page cards for all entries (allKnownKeys includes everything just added)
       loadEl.textContent = 'Fetching page data…';
-
-      // Compute all known verse keys NOW (after D.knownAyat was updated above)
-      // so buildPageCards can count lines from ALL memorised surahs on shared pages.
       const allKnownKeys = await buildAllKnownVerseKeys();
 
-      if (surahLabels) {
-        // Process each surah individually so each sourceLabel maps to its own surah
-        for (const sl of surahLabels) {
-          const s = parseInt(sl);
-          const meta = await getSurahMeta();
-          const surahVerses = [];
-          for (let a = 1; a <= meta[s]; a++) surahVerses.push({ surah: s, ayah: a });
-          const cards = await buildPageCards(surahVerses, sl, loadEl, allKnownKeys);
+      for (const { verses, label, surahLabels } of parsed) {
+        if (surahLabels) {
+          for (const sl of surahLabels) {
+            const s = parseInt(sl);
+            const meta = await getSurahMeta();
+            const surahVerses = [];
+            for (let a = 1; a <= meta[s]; a++) surahVerses.push({ surah: s, ayah: a });
+            const cards = await buildPageCards(surahVerses, sl, loadEl, allKnownKeys);
+            for (const { page, verseLabel, ln } of cards) {
+              const existingIdx = D.pages.findIndex(p => p.page === page);
+              if (existingIdx === -1) {
+                D.pages.push({ page, verses: verseLabel, ln, done: false, next: false, sourceLabels: [sl] });
+                D.recentQueue = D.recentQueue.filter(n => n !== page);
+                D.recentQueue.push(page);
+                if (D.recentQueue.length > 10) D.recentQueue.shift();
+              } else {
+                const pg = D.pages[existingIdx];
+                if (!pg.sourceLabels) pg.sourceLabels = pg.sourceLabel ? [pg.sourceLabel] : [];
+                delete pg.sourceLabel;
+                if (!pg.sourceLabels.includes(sl)) pg.sourceLabels.push(sl);
+                pg.verses = verseLabel; pg.ln = ln;
+              }
+            }
+          }
+        } else {
+          const cards = await buildPageCards(verses, label, loadEl, allKnownKeys);
           for (const { page, verseLabel, ln } of cards) {
             const existingIdx = D.pages.findIndex(p => p.page === page);
             if (existingIdx === -1) {
-              D.pages.push({ page, verses: verseLabel, ln, done: false, next: false, sourceLabels: [sl] });
+              D.pages.push({ page, verses: verseLabel, ln, done: false, next: false, sourceLabels: [label] });
               D.recentQueue = D.recentQueue.filter(n => n !== page);
               D.recentQueue.push(page);
               if (D.recentQueue.length > 10) D.recentQueue.shift();
@@ -3550,28 +3549,9 @@
               const pg = D.pages[existingIdx];
               if (!pg.sourceLabels) pg.sourceLabels = pg.sourceLabel ? [pg.sourceLabel] : [];
               delete pg.sourceLabel;
-              if (!pg.sourceLabels.includes(sl)) pg.sourceLabels.push(sl);
-              pg.verses = verseLabel;
-              pg.ln = ln;
+              if (!pg.sourceLabels.includes(label)) pg.sourceLabels.push(label);
+              pg.verses = verseLabel; pg.ln = ln;
             }
-          }
-        }
-      } else {
-        const cards = await buildPageCards(verses, label, loadEl, allKnownKeys);
-        for (const { page, verseLabel, ln } of cards) {
-          const existingIdx = D.pages.findIndex(p => p.page === page);
-          if (existingIdx === -1) {
-            D.pages.push({ page, verses: verseLabel, ln, done: false, next: false, sourceLabels: [label] });
-            D.recentQueue = D.recentQueue.filter(n => n !== page);
-            D.recentQueue.push(page);
-            if (D.recentQueue.length > 10) D.recentQueue.shift();
-          } else {
-            const pg = D.pages[existingIdx];
-            if (!pg.sourceLabels) pg.sourceLabels = pg.sourceLabel ? [pg.sourceLabel] : [];
-            delete pg.sourceLabel;
-            if (!pg.sourceLabels.includes(label)) pg.sourceLabels.push(label);
-            pg.verses = verseLabel;
-            pg.ln = ln;
           }
         }
       }
@@ -3646,14 +3626,19 @@
     }
 
     function labelSortKey(label) {
-      // Extract leading surah[:ayah] from labels like "19:1-33", "108-114", "2:255", "94"
-      const crossMatch = label.match(/^(\d+):(\d+)/);
-      if (crossMatch) return parseInt(crossMatch[1]) * 10000 + parseInt(crossMatch[2]);
-      const surahRange = label.match(/^(\d+)-/);
-      if (surahRange) return parseInt(surahRange[1]) * 10000 + 1;
+      // Extract leading surah[:ayah] from labels like "19:1-33", "2:255", "94"
+      const withAyah = label.match(/^(\d+):(\d+)/);
+      if (withAyah) return parseInt(withAyah[1]) * 10000 + parseInt(withAyah[2]);
       const surahOnly = label.match(/^(\d+)$/);
       if (surahOnly) return parseInt(surahOnly[1]) * 10000 + 1;
       return 9999999;
+    }
+
+    function labelToQuranUrl(label) {
+      // within-surah range: 18:1-33 → quran.com/18:1-33
+      // single ayah: 2:255 → quran.com/2:255
+      // whole surah: 93 → quran.com/93
+      return `https://quran.com/${label}`;
     }
 
     function renderKnownAyat() {
@@ -3670,9 +3655,12 @@
         if (q && !label.toLowerCase().includes(q)) return;
         const dotClass = type === 'qiraat' ? 'ayah-dot-qiraat' : 'ayah-dot-memory';
         const dotTitle = type === 'qiraat' ? 'Qiraat — click to switch to Memory' : 'Memory — click to switch to Qiraat';
-        h += `<div class="ayah-item" onmousedown="if(event.shiftKey){event.preventDefault();openAyahEditModal('${type}',${idx});return false;}">
+        const url = labelToQuranUrl(label);
+        h += `<div class="ayah-item" style="cursor:pointer"
+          onclick="if(!event.target.classList.contains('ayah-dot'))window.open('${url}','_blank')"
+          oncontextmenu="event.preventDefault();openAyahEditModal('${type}',${idx})">
           <span class="ayah-ref">${escHtml(label)}</span>
-          <span class="ayah-dot ${dotClass}" title="${dotTitle}" onclick="toggleAyahType('${type}',${idx})"></span>
+          <span class="ayah-dot ${dotClass}" title="${dotTitle}" onclick="event.stopPropagation();toggleAyahType('${type}',${idx})"></span>
         </div>`;
       });
       document.getElementById('known-ayat-list').innerHTML = h ||
@@ -3879,23 +3867,12 @@
       const known = new Set();
       const all = [...D.knownAyat.qiraat, ...D.knownAyat.memory];
       all.forEach(label => {
-        // A surah's beginning is known only if ayah 1 is included in the range.
-        // Cross-surah: X:A-Y:B — surah X known if A===1, surah Y never (starts mid)
-        const cross = label.match(/^(\d+):(\d+)-\d+:\d+$/);
-        if (cross) { if (parseInt(cross[2]) === 1) known.add(parseInt(cross[1])); return; }
         // Within-surah range: X:A-B — known if A===1
         const range = label.match(/^(\d+):(\d+)-\d+$/);
         if (range) { if (parseInt(range[2]) === 1) known.add(parseInt(range[1])); return; }
         // Single ayah: X:A — known if A===1
         const single = label.match(/^(\d+):(\d+)$/);
         if (single) { if (parseInt(single[2]) === 1) known.add(parseInt(single[1])); return; }
-        // Surah range: X-Y — all surahs known from beginning
-        const surahRange = label.match(/^(\d+)-(\d+)$/);
-        if (surahRange) {
-          const s1 = parseInt(surahRange[1]), s2 = parseInt(surahRange[2]);
-          if (s1 <= 114 && s2 <= 114) { for (let s = s1; s <= s2; s++) known.add(s); }
-          return;
-        }
         // Whole surah: X — known from beginning
         const pure = label.match(/^(\d+)$/);
         if (pure) { const n = parseInt(pure[1]); if (n >= 1 && n <= 114) known.add(n); }
